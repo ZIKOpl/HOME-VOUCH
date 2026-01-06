@@ -7,10 +7,12 @@ const axios = require('axios');
 
 const app = express();
 
-// --- MIDDLEWARES ---
+// Middlewares
 app.use(cors());
-app.use(express.static('public'));
 app.use(express.json());
+
+// Ajoute CECI pour que le site marche :
+app.use(express.static('public'));
 
 // --- CONNEXION MONGODB ---
 mongoose.connect(process.env.MONGO_URI)
