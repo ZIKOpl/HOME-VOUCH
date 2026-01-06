@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Dashboard VouchBot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
             --glass: blur(12px);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: 'Outfit', sans-serif;
@@ -38,7 +38,7 @@
         }
 
         /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
@@ -50,12 +50,13 @@
             justify-content: center;
             position: relative;
             z-index: 10;
+            padding: 1rem;
         }
 
         .login-container {
             background: var(--bg-card);
             backdrop-filter: var(--glass);
-            padding: 3rem;
+            padding: 2rem;
             border-radius: 24px;
             border: 1px solid var(--border);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -65,100 +66,56 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        .login-logo {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .login-title { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .login-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; }
+        .login-logo { font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .login-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
 
         .btn-discord {
-            background: #5865F2;
-            color: white;
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+            background: #5865F2; color: white; width: 100%; padding: 1rem;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
         }
         .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(88, 101, 242, 0.4); }
 
         /* --- DASHBOARD LAYOUT --- */
-        #dashboard-app {
-            display: none; /* Hidden until login */
-            height: 100vh;
-            display: flex; /* Will be toggled via JS */
-        }
+        #dashboard-app { display: none; height: 100vh; display: flex; position: relative; }
 
-        /* Sidebar */
+        /* Sidebar (Mobile Off-canvas) */
         .sidebar {
             width: 260px;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(10px);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
-            transition: 0.3s;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
 
         .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 2.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-size: 1.5rem; font-weight: 700; color: white;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;
         }
         .brand i { color: var(--primary); }
 
         .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            width: 100%;
-            text-align: left;
-            padding: 0.85rem 1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
-            margin-bottom: 0.5rem;
+            background: transparent; border: none; color: var(--text-muted);
+            width: 100%; text-align: left; padding: 0.85rem 1rem;
+            border-radius: 12px; cursor: pointer; font-size: 0.95rem;
+            font-weight: 500; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s ease; margin-bottom: 0.5rem;
         }
-
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-btn.active { 
             background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent);
-            color: var(--primary); 
-            border-left: 3px solid var(--primary);
+            color: var(--primary); border-left: 3px solid var(--primary);
         }
 
         .user-panel {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            cursor: pointer;
+            margin-top: auto; display: flex; align-items: center; gap: 10px;
+            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer;
         }
         .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { font-size: 0.9rem; }
@@ -167,134 +124,72 @@
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-            position: relative;
+            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
         }
 
-        .header-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         /* Cards Grid */
-        .grid-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
 
         .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; position: relative;
+            overflow: hidden; transition: transform 0.3s;
         }
         .stat-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.3); }
-        
-        .stat-icon {
-            position: absolute;
-            top: 1.5rem; right: 1.5rem;
-            font-size: 2rem;
-            color: rgba(255,255,255,0.05);
-        }
+        .stat-icon { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; color: rgba(255,255,255,0.05); }
         .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
         .stat-value { font-size: 2.5rem; font-weight: 700; color: white; }
 
         /* Data Tables */
         .table-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
         }
 
         .table-header {
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+            padding: 1.5rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid var(--border);
+            flex-wrap: wrap; gap: 1rem;
         }
         .table-title { font-size: 1.1rem; font-weight: 600; }
 
         .btn-add {
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
+            color: white; border: none; padding: 0.6rem 1.2rem;
+            border-radius: 8px; font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap;
         }
         .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
 
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            text-align: left;
-            padding: 1rem 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            background: rgba(0,0,0,0.2);
-        }
-        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; } /* Important pour mobile scroll */
+        th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); white-space: nowrap; }
+        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; white-space: nowrap; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
         .btn-icon {
-            width: 32px; height: 32px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            color: white;
+            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
         }
         .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
 
         /* Modals */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s; padding: 1rem;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
 
         .modal {
-            background: #1e293b;
-            border: 1px solid var(--border);
-            width: 100%;
-            max-width: 450px;
-            border-radius: 16px;
-            padding: 2rem;
+            background: #1e293b; border: 1px solid var(--border); width: 100%;
+            max-width: 450px; border-radius: 16px; padding: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s;
+            transform: scale(0.9); transition: transform 0.3s;
         }
         .modal-overlay.active .modal { transform: scale(1); }
 
@@ -304,26 +199,12 @@
         .form-group { margin-bottom: 1.2rem; }
         .form-label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
         .form-input, .form-select {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            padding: 0.8rem;
-            border-radius: 8px;
-            color: white;
-            font-family: inherit;
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit;
         }
         .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
 
-        .btn-submit {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        .btn-submit { width: 100%; background: var(--primary); color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-submit:hover { background: var(--primary-hover); }
 
         /* Utilities */
@@ -332,25 +213,82 @@
         .badge-star { background: rgba(240, 178, 50, 0.15); color: #fbbf24; }
         
         .toast {
-            position: fixed;
-            bottom: 30px; right: 30px;
-            background: #1e293b;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: 0.3s;
-            z-index: 200;
+            position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white;
+            padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px);
+            opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center;
         }
         .toast.show { transform: translateY(0); opacity: 1; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MOBILE HEADER (HAMBURGER) --- */
+        .mobile-header {
+            display: none;
+            height: 60px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .hamburger {
+            font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer;
+        }
+        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            /* Layout Adjustments */
+            #dashboard-app { flex-direction: column; }
+            
+            /* Sidebar becomes a drawer */
+            .sidebar {
+                position: fixed;
+                top: 0; left: 0; bottom: 0;
+                width: 280px;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
+            .sidebar.mobile-open { transform: translateX(0); }
+
+            /* Show Mobile Header */
+            .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; z-index: 900; }
+            
+            /* Adjust Main Content */
+            .main-content { padding: 5rem 1rem 1rem 1rem; /* Add top padding for fixed header */ }
+            
+            /* Grid Stats adjust */
+            .grid-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+            .stat-value { font-size: 1.8rem; }
+            .stat-icon { font-size: 1.5rem; }
+
+            /* Table Headers Stack */
+            .table-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            
+            /* Modal Width */
+            .modal { max-width: 100%; padding: 1.5rem; }
+            
+            /* Toast Mobile */
+            .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
+            
+            /* Login Card */
+            .login-container { padding: 1.5rem; }
+            .login-logo { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- --- MOBILE HEADER --- -->
+    <div id="mobile-header" class="mobile-header">
+        <button class="hamburger" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="mobile-logo">HOME MARKET</div>
+        <img id="user-avatar-mobile" src="" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary);" alt="User">
+    </div>
 
     <!-- --- LOGIN PAGE --- -->
     <div id="login-page">
@@ -367,7 +305,7 @@
 
     <!-- --- DASHBOARD APP --- -->
     <div id="dashboard-app" class="hidden">
-        <nav class="sidebar">
+        <nav class="sidebar" id="sidebar">
             <div class="brand">
                 <i class="fa-solid fa-layer-group"></i> HOME MARKET
             </div>
@@ -427,10 +365,13 @@
                     <div class="table-header">
                         <h3 class="table-title">Activité Récente</h3>
                     </div>
-                    <table>
-                        <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th></tr></thead>
-                        <tbody id="dashboard-table-body"></tbody>
-                    </table>
+                    <!-- Table scrollable container for mobile -->
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th></tr></thead>
+                            <tbody id="dashboard-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -439,13 +380,15 @@
                 <h2 class="header-title">Gestion des Vouches</h2>
                 <div class="table-container">
                     <div class="table-header">
-                        <input type="text" placeholder="Rechercher..." class="form-input" style="width:250px;" onkeyup="renderVouches()" id="search-input">
+                        <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
                         <button class="btn-add" onclick="openModal('modal-vouch')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
-                    <table>
-                        <thead><tr><th>ID</th><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Actions</th></tr></thead>
-                        <tbody id="vouch-table-body"></tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>ID</th><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Actions</th></tr></thead>
+                            <tbody id="vouch-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -457,10 +400,12 @@
                         <h3 class="table-title">Liste des vendeurs enregistrés</h3>
                         <button class="btn-add" onclick="openModal('modal-vendeur')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
-                    <table>
-                        <thead><tr><th>Discord ID</th><th>Nom d'affichage</th><th>Actions</th></tr></thead>
-                        <tbody id="vendeur-table-body"></tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Discord ID</th><th>Nom d'affichage</th><th>Actions</th></tr></thead>
+                            <tbody id="vendeur-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -472,10 +417,12 @@
                         <h3 class="table-title">Items disponibles à la vente</h3>
                         <button class="btn-add" onclick="openModal('modal-item')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
-                    <table>
-                        <thead><tr><th>Nom de l'item</th><th>Actions</th></tr></thead>
-                        <tbody id="item-table-body"></tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Nom de l'item</th><th>Actions</th></tr></thead>
+                            <tbody id="item-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -487,10 +434,12 @@
                         <h3 class="table-title">Méthodes acceptées</h3>
                         <button class="btn-add" onclick="openModal('modal-paiement')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
-                    <table>
-                        <thead><tr><th>Nom</th><th>Actions</th></tr></thead>
-                        <tbody id="paiement-table-body"></tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Nom</th><th>Actions</th></tr></thead>
+                            <tbody id="paiement-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -600,12 +549,16 @@
 
     <script>
         // --- CONFIG ---
-        // CHANGE CECI AVEC TON VRAI ID APPLICATION DISCORD
         const DISCORD_CLIENT_ID = "1456097389453643894"; 
         const API_URL = window.location.origin + "/api";
 
         // --- ETAT GLOBAL ---
         let db = { vouches: [], vendeurs: [], items: [], paiements: [] };
+
+        // --- MOBILE UI ---
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
 
         // --- LOGIN SYSTEM ---
         function discordLogin() {
@@ -629,6 +582,7 @@
                     localStorage.setItem('discord_token', token);
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
+                    document.getElementById('user-avatar-mobile').src = data.avatar;
                     showDashboard();
                     loadAllData();
                 } else {
@@ -852,6 +806,11 @@
             
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
+            
+            // Fermer sidebar sur mobile après click
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
         }
 
         function openModal(id) {
