@@ -11,13 +11,14 @@
         :root {
             --bg-dark: #0f172a;
             --bg-card: rgba(30, 41, 59, 0.7);
-            --primary: #6366f1; /* Indigo */
+            --primary: #6366f1;
             --primary-hover: #4f46e5;
-            --accent: #8b5cf6; /* Violet */
+            --accent: #8b5cf6;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger: #ef4444;
             --success: #10b981;
+            --warning: #f97316; /* Orange pour le crayon */
             --border: rgba(255, 255, 255, 0.08);
             --glass: blur(12px);
         }
@@ -113,14 +114,54 @@
             color: var(--primary); border-left: 3px solid var(--primary);
         }
 
+        /* USER PANEL & MENU */
         .user-panel {
-            margin-top: auto; display: flex; align-items: center; gap: 10px;
-            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer;
+            margin-top: auto;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative; /* Pour le menu */
         }
+        
+        .user-info-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { font-size: 0.9rem; }
         .user-name { font-weight: 600; color: white; }
         .user-status { font-size: 0.75rem; color: var(--success); }
+
+        /* MENU DÉROULANT (PC) */
+        .user-menu {
+            position: absolute;
+            bottom: 110%; left: 0;
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
+        .user-menu.show { display: flex; }
+        .user-menu-item {
+            padding: 10px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .user-menu-item:hover { background: rgba(255,255,255,0.1); }
+        .user-menu-item.logout { color: var(--danger); }
 
         /* Main Content */
         .main-content {
@@ -162,20 +203,32 @@
         }
         .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
 
-        table { width: 100%; border-collapse: collapse; min-width: 600px; } /* Important pour mobile scroll */
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); white-space: nowrap; }
         td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; white-space: nowrap; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
-        .btn-icon {
-            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
-        }
+        /* ACTIONS ICONS */
+        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
         .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
 
-        /* Modals */
+        /* CRAYON (EDIT) */
+        .btn-edit {
+            background: rgba(249, 115, 22, 0.1); /* Orange clair */
+            color: #f97316;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            margin-right: 5px;
+        }
+        .btn-edit:hover {
+            background: #f97316;
+            color: white;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        /* Modals Generics */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
@@ -205,6 +258,8 @@
 
         .btn-submit { width: 100%; background: var(--primary); color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-submit:hover { background: var(--primary-hover); }
+        .btn-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: white; }
 
         /* Utilities */
         .hidden { display: none !important; }
@@ -230,7 +285,7 @@
         .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
         .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
 
-        /* --- RESPONSIVE MEDIA QUERIES --- */
+        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             #dashboard-app { flex-direction: column; }
             .sidebar {
@@ -255,11 +310,9 @@
 
     <!-- --- MOBILE HEADER --- -->
     <div id="mobile-header" class="mobile-header">
-        <button class="hamburger" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
         <div class="mobile-logo">HOME MARKET</div>
-        <img id="user-avatar-mobile" src="" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary);" alt="User">
+        <img id="user-avatar-mobile" src="" onclick="openLogoutModal()" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary);" alt="User">
     </div>
 
     <!-- --- LOGIN PAGE --- -->
@@ -301,11 +354,21 @@
                     <i class="fa-solid fa-sliders"></i> Configuration
                 </button>
             </div>
-            <div class="user-panel" onclick="logout()">
-                <img id="user-avatar" src="" alt="Avatar">
-                <div class="user-info">
-                    <div id="user-name" class="user-name">Chargement...</div>
-                    <div class="user-status"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Connecté</div>
+            
+            <!-- User Panel PC (Click to toggle menu) -->
+            <div class="user-panel" onclick="toggleUserMenu()">
+                <div class="user-info-display">
+                    <img id="user-avatar" src="" alt="Avatar">
+                    <div class="user-info">
+                        <div id="user-name" class="user-name">Chargement...</div>
+                        <div class="user-status"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Connecté</div>
+                    </div>
+                </div>
+                <!-- Menu Déroulant PC -->
+                <div class="user-menu" id="user-menu">
+                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                    </a>
                 </div>
             </div>
         </nav>
@@ -346,13 +409,13 @@
                 </div>
             </section>
 
-            <!-- VOUCHES -->
+            <!-- VOUCHES (PAS DE BOUTON AJOUTER) -->
             <section id="view-vouches" class="hidden">
                 <h2 class="header-title">Gestion des Vouches</h2>
                 <div class="table-container">
                     <div class="table-header">
                         <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
-                        <button class="btn-add" onclick="openModal('modal-vouch')"><i class="fa-solid fa-plus"></i> Ajouter</button>
+                        <!-- BOUTON AJOUTER SUPPRIMÉ -->
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
@@ -426,6 +489,10 @@
                         <label class="form-label">Log Channel ID</label>
                         <input type="text" id="config-log-input" class="form-input" placeholder="123456...">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Leaderboard Channel ID</label>
+                        <input type="text" id="config-leaderboard-input" class="form-input" placeholder="ID du salon du leaderboard">
+                    </div>
                     <button class="btn-submit" onclick="saveConfig()">Sauvegarder la configuration</button>
                 </div>
             </section>
@@ -435,42 +502,7 @@
 
     <!-- --- MODALS --- -->
 
-    <!-- Modal Vouch -->
-    <div id="modal-vouch" class="modal-overlay">
-        <div class="modal">
-            <button class="close-modal" onclick="closeModal('modal-vouch')">&times;</button>
-            <h2>Nouveau Vouch</h2>
-            <form onsubmit="submitVouch(event)">
-                <div class="form-group">
-                    <label class="form-label">Vendeur</label>
-                    <select id="vouch-vendor" class="form-select" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Item</label>
-                    <select id="vouch-item" class="form-select" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Paiement</label>
-                    <select id="vouch-pay" class="form-select" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Prix</label>
-                    <input type="text" id="vouch-price" class="form-input" placeholder="Ex: 15€" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Quantité</label>
-                    <input type="number" id="vouch-quantity" class="form-input" value="1" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Note</label>
-                    <input type="number" id="vouch-note" class="form-input" min="1" max="5" required>
-                </div>
-                <button type="submit" class="btn-submit">Valider</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Vendeur -->
+    <!-- Modal Vendeur (CRÉER) -->
     <div id="modal-vendeur" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-vendeur')">&times;</button>
@@ -489,7 +521,27 @@
         </div>
     </div>
 
-    <!-- Modal Item -->
+    <!-- Modal Vendeur (MODIFIER) -->
+    <div id="modal-vendeur-edit" class="modal-overlay">
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-vendeur-edit')">&times;</button>
+            <h2>Modifier Vendeur</h2>
+            <form onsubmit="submitEditVendeur(event)">
+                <input type="hidden" id="edit-vnd-id">
+                <div class="form-group">
+                    <label class="form-label">Discord ID</label>
+                    <input type="text" id="edit-vnd-id-display" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom d'affichage</label>
+                    <input type="text" id="edit-vnd-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Item (CRÉER) -->
     <div id="modal-item" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-item')">&times;</button>
@@ -504,7 +556,23 @@
         </div>
     </div>
 
-    <!-- Modal Paiement -->
+    <!-- Modal Item (MODIFIER) -->
+    <div id="modal-item-edit" class="modal-overlay">
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-item-edit')">&times;</button>
+            <h2>Modifier Item</h2>
+            <form onsubmit="submitEditItem(event)">
+                <input type="hidden" id="edit-itm-id">
+                <div class="form-group">
+                    <label class="form-label">Nom de l'item</label>
+                    <input type="text" id="edit-itm-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Paiement (CRÉER) -->
     <div id="modal-paiement" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-paiement')">&times;</button>
@@ -519,6 +587,52 @@
         </div>
     </div>
 
+    <!-- Modal Paiement (MODIFIER) -->
+    <div id="modal-paiement-edit" class="modal-overlay">
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-paiement-edit')">&times;</button>
+            <h2>Modifier Paiement</h2>
+            <form onsubmit="submitEditPaiement(event)">
+                <input type="hidden" id="edit-pay-id">
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input type="text" id="edit-pay-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- --- MODAL DE CONFIRMATION CUSTOM (POPUP) --- -->
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal" style="max-width: 350px; text-align: center;">
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h2 id="confirm-title" style="margin-bottom: 0.5rem;">Confirmer ?</h2>
+            <p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 2rem;">Voulez-vous vraiment effectuer cette action ?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-cancel" onclick="closeModal('modal-confirm')">Annuler</button>
+                <button class="btn-submit" id="confirm-btn-action" style="background: var(--danger);">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- MODAL DE LOGOUT (PC/MOBILE) --- -->
+    <div id="modal-logout" class="modal-overlay">
+        <div class="modal" style="max-width: 350px; text-align: center;">
+            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <h2 style="margin-bottom: 0.5rem;">Déconnexion</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Êtes-vous sûr de vouloir quitter le panneau ?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-cancel" onclick="closeModal('modal-logout')">Annuler</button>
+                <button class="btn-submit" style="background: var(--danger);" onclick="performLogout()">Déconnecter</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="toast">Action réussie</div>
 
@@ -529,10 +643,35 @@
 
         // --- ETAT GLOBAL ---
         let db = { vouches: [], vendeurs: [], items: [], paiements: [] };
+        let pendingAction = null; // Pour stocker la fonction à exécuter après confirmation
 
-        // --- MOBILE UI ---
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('mobile-open');
+        // --- UI UTILS ---
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
+        function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('show'); }
+
+        // --- CONFIRMATION POPUP CUSTOM ---
+        function showConfirm(title, msg, actionCallback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent = msg;
+            pendingAction = actionCallback;
+            document.getElementById('modal-confirm').classList.add('active');
+        }
+
+        document.getElementById('confirm-btn-action').onclick = () => {
+            if(pendingAction) pendingAction();
+            closeModal('modal-confirm');
+            pendingAction = null;
+        };
+
+        // --- LOGOUT SYSTEM ---
+        function openLogoutModal() {
+            document.getElementById('modal-logout').classList.add('active');
+        }
+
+        function performLogout() {
+            localStorage.removeItem('discord_token');
+            // Redirige vers la page racine sans hash (évite les bugs d'URL discord)
+            window.location.href = window.location.pathname;
         }
 
         // --- LOGIN SYSTEM ---
@@ -555,6 +694,9 @@
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
+                    // Nettoyer l'URL
+                    history.pushState("", document.title, window.location.pathname);
+                    
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
                     document.getElementById('user-avatar-mobile').src = data.avatar;
@@ -565,26 +707,11 @@
                     document.getElementById('login-error').style.display = 'block';
                     document.getElementById('login-error').textContent = data.error || "Accès refusé";
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        function showLogin() {
-            document.getElementById('login-page').style.display = 'flex';
-            document.getElementById('dashboard-app').classList.add('hidden');
-        }
-
-        function showDashboard() {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('dashboard-app').classList.remove('hidden');
-            document.getElementById('dashboard-app').style.display = 'flex';
-        }
-
-        function logout() {
-            localStorage.removeItem('discord_token');
-            window.location.reload();
-        }
+        function showLogin() { document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-app').classList.add('hidden'); }
+        function showDashboard() { document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
 
         // --- DATA FETCHING ---
         async function loadAllData() {
@@ -602,18 +729,10 @@
                 db.paiements = await pRes.json();
 
                 renderAll();
-            } catch (e) {
-                console.log("Erreur chargement données");
-            }
+            } catch (e) { console.log("Erreur chargement données"); }
         }
 
-        function renderAll() {
-            renderHome();
-            renderVouches();
-            renderVendeurs();
-            renderItems();
-            renderPaiements();
-        }
+        function renderAll() { renderHome(); renderVouches(); renderVendeurs(); renderItems(); renderPaiements(); }
 
         // --- RENDER FUNCTIONS ---
         function renderHome() {
@@ -656,7 +775,10 @@
                 <tr>
                     <td style="font-family:monospace; color:var(--primary)">${v.discordId}</td>
                     <td>${v.name}</td>
-                    <td><button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    <td>
+                        <button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -665,7 +787,10 @@
             document.getElementById('item-table-body').innerHTML = db.items.map(i => `
                 <tr>
                     <td>${i.name}</td>
-                    <td><button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    <td>
+                        <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -674,105 +799,121 @@
             document.getElementById('paiement-table-body').innerHTML = db.paiements.map(p => `
                 <tr>
                     <td>${p.name}</td>
-                    <td><button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    <td>
+                        <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        // --- ACTIONS API (TOUTES FONCTIONNELLES) ---
-
-        // VOUCHE
-        async function submitVouch(e) {
-            e.preventDefault();
-            const select = document.getElementById('vouch-vendor');
-            const data = {
-                vendeurId: select.value,
-                vendeurName: select.options[select.selectedIndex].text,
-                item: document.getElementById('vouch-item').value,
-                paiement: document.getElementById('vouch-pay').value,
-                prix: document.getElementById('vouch-price').value,
-                quantity: parseInt(document.getElementById('vouch-quantity').value),
-                note: parseInt(document.getElementById('vouch-note').value),
-                authorTag: "Admin Dashboard",
-                anonyme: false
-            };
-            await fetch(`${API_URL}/vouches`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            closeModal('modal-vouch');
-            loadAllData();
-            showToast("Vouch ajouté avec succès");
-        }
-
-        async function deleteVouch(id) {
-            if(confirm("Supprimer ce vouch ?")) {
-                await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
-                loadAllData();
-                showToast("Supprimé");
-            }
-        }
-
-        // VENDEUR
+        // --- CREATE ACTIONS ---
         async function submitVendeur(e) {
             e.preventDefault();
-            const data = {
-                discordId: document.getElementById('vnd-id').value,
-                name: document.getElementById('vnd-name').value
-            };
+            const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value };
             await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            closeModal('modal-vendeur');
-            loadAllData();
-            showToast("Vendeur ajouté");
+            closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté");
         }
-
-        async function deleteVendeur(id) {
-            if(confirm("Supprimer le vendeur ?")) {
-                await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
-                loadAllData();
-            }
-        }
-
-        // ITEM
         async function submitItem(e) {
             e.preventDefault();
             const data = { name: document.getElementById('itm-name').value };
             await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            closeModal('modal-item');
-            loadAllData();
-            showToast("Item ajouté");
+            closeModal('modal-item'); loadAllData(); showToast("Item ajouté");
         }
-
-        async function deleteItem(id) {
-            if(confirm("Supprimer l'item ?")) {
-                await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
-                loadAllData();
-            }
-        }
-
-        // PAIEMENT
         async function submitPaiement(e) {
             e.preventDefault();
             const data = { name: document.getElementById('pay-name').value };
             await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            closeModal('modal-paiement');
-            loadAllData();
-            showToast("Paiement ajouté");
+            closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté");
         }
 
+        // --- DELETE ACTIONS ---
+        async function deleteVouch(id) {
+            showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
+                await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Supprimé");
+            });
+        }
+        async function deleteVendeur(id) {
+            showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
+                await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Vendeur supprimé");
+            });
+        }
+        async function deleteItem(id) {
+            showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
+                await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Item supprimé");
+            });
+        }
         async function deletePaiement(id) {
-            if(confirm("Supprimer ce moyen de paiement ?")) {
+            showConfirm("Supprimer Paiement", "", async () => {
                 await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
-                loadAllData();
-            }
+                loadAllData(); showToast("Paiement supprimé");
+            });
         }
 
-        // CONFIG
+        // --- EDIT ACTIONS ---
+        
+        // Vendeur Edit
+        function openEditVendeur(id, discordId, name) {
+            document.getElementById('edit-vnd-id').value = id;
+            document.getElementById('edit-vnd-id-display').value = discordId; // ID souvent modifiable
+            document.getElementById('edit-vnd-name').value = name;
+            openModal('modal-vendeur-edit');
+        }
+
+        async function submitEditVendeur(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-vnd-id').value;
+            const data = {
+                discordId: document.getElementById('edit-vnd-id-display').value,
+                name: document.getElementById('edit-vnd-name').value
+            };
+            await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
+        }
+
+        // Item Edit
+        function openEditItem(id, name) {
+            document.getElementById('edit-itm-id').value = id;
+            document.getElementById('edit-itm-name').value = name;
+            openModal('modal-item-edit');
+        }
+
+        async function submitEditItem(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-itm-id').value;
+            const data = { name: document.getElementById('edit-itm-name').value };
+            await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
+        }
+
+        // Paiement Edit
+        function openEditPaiement(id, name) {
+            document.getElementById('edit-pay-id').value = id;
+            document.getElementById('edit-pay-name').value = name;
+            openModal('modal-paiement-edit');
+        }
+
+        async function submitEditPaiement(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-pay-id').value;
+            const data = { name: document.getElementById('edit-pay-name').value };
+            await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
+        }
+
+        // --- CONFIG ---
         async function saveConfig() {
             const color = document.getElementById('config-color-input').value;
             const logId = document.getElementById('config-log-input').value;
+            const lbId = document.getElementById('config-leaderboard-input').value; // Nouveau champ
             
             await fetch(`${API_URL}/config`, { 
                 method: 'PUT', 
                 headers: {'Content-Type':'application/json'}, 
-                body: JSON.stringify({ embedColor: color, logChannelId: logId }) 
+                body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) 
             });
             showToast("Configuration sauvegardée");
         }
@@ -781,37 +922,16 @@
         function router(view, btn) {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-'+view).classList.remove('hidden');
-            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            
-            // Fermer sidebar sur mobile après click
-            if(window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('mobile-open');
-            }
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
         }
 
-        function openModal(id) {
-            if(id === 'modal-vouch') {
-                const vSelect = document.getElementById('vouch-vendor');
-                const iSelect = document.getElementById('vouch-item');
-                const pSelect = document.getElementById('vouch-pay');
-                
-                vSelect.innerHTML = db.vendeurs.map(v => `<option value="${v.discordId}">${v.name}</option>`).join('');
-                iSelect.innerHTML = db.items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
-                pSelect.innerHTML = db.paiements.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-            }
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
         function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
+            const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
