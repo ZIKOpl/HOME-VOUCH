@@ -244,6 +244,16 @@
         }
         .toast.show { transform: translateY(0); opacity: 1; }
 
+        /* --- STYLES POUR LE SYSTÈME DE LOGS (NOUVEAU) --- */
+        .badge-log { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); font-size: 0.7rem; border-radius: 10px; padding: 2px 6px; }
+        .badge-log.creation { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge-log.modification { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge-log.deletion { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .logs-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- MOBILE HEADER (HAMBURGER) --- */
@@ -260,9 +270,11 @@
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
             background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
         }
-        .date-presets {
-            display: flex; gap: 0.5rem; flex-wrap: wrap;
-        }
+        .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .date-filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .date-filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; }
+        .btn-report:hover { background: #059669; }
         .preset-btn {
             background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border);
             padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
@@ -286,12 +298,9 @@
             .stat-value { font-size: 1.8rem; }
             .stat-icon { font-size: 1.5rem; }
             .accounting-header { flex-direction: column; align-items: stretch; gap: 1rem; }
-            .date-presets { overflow-x: auto; }
+            .btn-report { margin-left: 0; }
             .charts-grid { grid-template-columns: 1fr; }
-            .modal { max-width: 100%; padding: 1.5rem; }
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
-            .login-container { padding: 1.5rem; }
-            .login-logo { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -341,6 +350,9 @@
                 </button>
                 <button class="nav-btn" onclick="router('paiements', this)">
                     <i class="fa-solid fa-wallet"></i> Paiements
+                </button>
+                <button class="nav-btn" onclick="router('logs', this)">
+                    <i class="fa-solid fa-list-ul"></i> Logs
                 </button>
                 <button class="nav-btn" onclick="router('config', this)">
                     <i class="fa-solid fa-sliders"></i> Configuration
@@ -407,7 +419,7 @@
                 <!-- PRESETS BUTTONS -->
                 <div class="accounting-header">
                     <div style="color:var(--text-muted); font-size:0.9rem;">Période d'analyse :</div>
-                    <div class="date-presets">
+                    <div class="date-filters">
                         <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today">Aujourd'hui</button>
                         <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d">7 Jours</button>
                         <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d">1 Mois</button>
@@ -469,7 +481,6 @@
                 <div class="table-container">
                     <div class="table-header">
                         <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
-                        <!-- BOUTON AJOUTER SUPPRIMÉ -->
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
@@ -526,6 +537,23 @@
                         <table>
                             <thead><tr><th>Nom</th><th>Actions</th></tr></thead>
                             <tbody id="paiement-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LOGS SECTION (NOUVEAU) -->
+            <section id="view-logs" class="hidden">
+                <h2 class="header-title">Journal d'Activité</h2>
+                <div class="logs-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Historique complet des actions</h3>
+                        <button class="btn-add" onclick="exportLogs()" style="background:var(--text-muted);"><i class="fa-solid fa-download"></i> Exporter</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Heure</th><th>Action</th><th>Élément</th><th>Détails</th><th>Auteur</th></tr></thead>
+                            <tbody id="logs-table-body"></tbody>
                         </table>
                     </div>
                 </div>
@@ -696,9 +724,10 @@
         const API_URL = window.location.origin + "/api";
 
         // --- ETAT GLOBAL ---
-        let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {} };
+        let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {}, user: {} };
         let pendingAction = null; 
         let charts = { revenue: null, sellers: null, items: null }; // Stockage Chart.js
+        let activityLogs = []; // SYSTEME DE LOGS LOCAL
 
         // --- UI UTILS ---
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
@@ -709,11 +738,7 @@
 
         // --- LOGOUT SYSTEM ---
         function openLogoutModal() { document.getElementById('modal-logout').classList.add('active'); }
-        function performLogout() { 
-            localStorage.removeItem('discord_token'); 
-            // Rechargement propre de la page
-            window.location.href = window.location.pathname; 
-        }
+        function performLogout() { localStorage.removeItem('discord_token'); window.location.href = window.location.pathname; }
 
         function discordLogin() {
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.href)}&response_type=token&scope=identify%20guilds`;
@@ -726,19 +751,19 @@
             if (!token) return showLogin();
 
             try {
-                const res = await fetch(`${API_URL}/auth/verify`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token })
-                });
+                const res = await fetch(`${API_URL}/auth/verify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token }) });
                 const data = await res.json();
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
-                    // Nettoyer l'URL pour éviter le bug Discord
+                    // Nettoyer l'URL
                     history.pushState("", document.title, window.location.pathname);
                     
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
                     document.getElementById('user-avatar-mobile').src = data.avatar;
+                    db.user = { tag: data.username }; // Pour les logs
+                    
                     showDashboard();
                     loadAllData();
                 } else {
@@ -752,6 +777,67 @@
         function showLogin() { document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-app').classList.add('hidden'); }
         function showDashboard() { document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
 
+        // --- SYSTEME DE LOGS (NOUVEAU) ---
+        function logAction(type, entityName, details) {
+            const now = new Date();
+            const logEntry = {
+                date: now,
+                timestamp: now.getTime(),
+                type: type, // CRÉATION, MODIFICATION, SUPPRESSION
+                entity: entityName, // Vendeur, Item, etc.
+                details: details,
+                author: db.user.tag || "Utilisateur"
+            };
+            // Ajouter au début du tableau
+            activityLogs.unshift(logEntry);
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const tbody = document.getElementById('logs-table-body');
+            if(activityLogs.length ===0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucune activité enregistrée.</td></tr>`;
+                return;
+            }
+
+            // Formatage de la date
+            tbody.innerHTML = activityLogs.map(log => {
+                let badgeClass = "badge-log";
+                let typeText = "";
+                
+                if(log.type === 'CRÉATION') { badgeClass += " creation"; typeText = "Ajout"; }
+                else if(log.type === 'MODIFICATION') { badgeClass += " modification"; typeText = "Modif"; }
+                else if(log.type === 'SUPPRESSION') { badgeClass += " deletion"; typeText = "Supp"; }
+
+                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
+
+                return `
+                    <tr>
+                        <td style="color:var(--text-muted); font-size:0.85rem;">${dateStr}</td>
+                        <td><span class="${badgeClass}">${typeText}</span></td>
+                        <td style="font-weight:600;">${log.entity}</td>
+                        <td style="color:var(--text-muted);">${log.details}</td>
+                        <td style="color:var(--text-muted); font-size:0.9rem;">${log.author}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function exportLogs() {
+            let csvContent = "data:text/csv;charset=utf-8,Type,Entité,Détails,Auteur,Date\n";
+            activityLogs.forEach(log => {
+                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR');
+                csvContent += `${log.type},${log.entity},${log.details},${log.author},${dateStr}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "activite_site_logs.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // --- DATA FETCHING ---
         async function loadAllData() {
             try {
@@ -760,7 +846,7 @@
                     fetch(`${API_URL}/vendeurs`),
                     fetch(`${API_URL}/items`),
                     fetch(`${API_URL}/paiements`),
-                    fetch(`${API_URL}/config`) // Récupérer la config aussi
+                    fetch(`${API_URL}/config`)
                 ]);
 
                 db.vouches = await vRes.json();
@@ -769,7 +855,6 @@
                 db.paiements = await pRes.json();
                 db.config = await cRes.json();
 
-                // Remplir les inputs de configuration si existe
                 if(db.config) {
                     if(db.config.embedColor) document.getElementById('config-color-input').value = db.config.embedColor;
                     if(db.config.logChannelId) document.getElementById('config-log-input').value = db.config.logChannelId;
@@ -824,8 +909,8 @@
                     <td style="font-family:monospace; color:var(--primary)">${v.discordId}</td>
                     <td>${v.name}</td>
                     <td>
-                        <button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -836,8 +921,8 @@
                 <tr>
                     <td>${i.name}</td>
                     <td>
-                        <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -848,8 +933,8 @@
                 <tr>
                     <td>${p.name}</td>
                     <td>
-                        <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -858,9 +943,7 @@
         // --- COMPTABILITÉ (LE NOUVEAU TRUC) ---
 
         // Helper: Extraire prix en float
-        function parsePrice(priceStr) {
-            return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0;
-        }
+        function parsePrice(priceStr) { return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0; }
 
         // Logique des présélections de dates
         function getPresetDates(preset) {
@@ -1076,6 +1159,7 @@
             e.preventDefault();
             const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value };
             await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Vendeur', data.name); // LOG ICI
             closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté");
         }
         async function submitEditVendeur(e) {
@@ -1086,19 +1170,25 @@
                 name: document.getElementById('edit-vnd-name').value
             };
             await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Vendeur', data.name); // LOG ICI
             closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
         }
         async function deleteVendeur(id) {
-            showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
-                await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
-                loadAllData(); showToast("Vendeur supprimé");
-            });
+            const vnd = db.vendeurs.find(v => v._id === id);
+            if(confirm(`Supprimer le vendeur ${vnd.name} ?`)) {
+                showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
+                    await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Vendeur', vnd.name); // LOG ICI
+                    loadAllData(); showToast("Vendeur supprimé");
+                });
+            }
         }
 
         async function submitItem(e) {
             e.preventDefault();
             const data = { name: document.getElementById('itm-name').value };
             await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Item', data.name); // LOG ICI
             closeModal('modal-item'); loadAllData(); showToast("Item ajouté");
         }
         async function submitEditItem(e) {
@@ -1106,19 +1196,25 @@
             const id = document.getElementById('edit-itm-id').value;
             const data = { name: document.getElementById('edit-itm-name').value };
             await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Item', data.name); // LOG ICI
             closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
         }
         async function deleteItem(id) {
-            showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
-                await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
-                loadAllData(); showToast("Item supprimé");
-            });
+            const itm = db.items.find(i => i._id === id);
+            if(confirm(`Supprimer l'item ${itm.name} ?`)) {
+                showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
+                    await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Item', itm.name); // LOG ICI
+                    loadAllData(); showToast("Item supprimé");
+                });
+            }
         }
 
         async function submitPaiement(e) {
             e.preventDefault();
             const data = { name: document.getElementById('pay-name').value };
             await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Paiement', data.name); // LOG ICI
             closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté");
         }
         async function submitEditPaiement(e) {
@@ -1126,19 +1222,24 @@
             const id = document.getElementById('edit-pay-id').value;
             const data = { name: document.getElementById('edit-pay-name').value };
             await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Paiement', data.name); // LOG ICI
             closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
         }
         async function deletePaiement(id) {
-            showConfirm("Supprimer Paiement", "", async () => {
-                await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
-                loadAllData(); showToast("Paiement supprimé");
-            });
+            const pay = db.paiements.find(p => p._id === id);
+            if(confirm(`Supprimer le paiement ${pay.name} ?`)) {
+                showConfirm("Supprimer Paiement", "", async () => {
+                    await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Paiement', pay.name); // LOG ICI
+                    loadAllData(); showToast("Paiement supprimé");
+                });
+            }
         }
 
         async function saveConfig() {
             const color = document.getElementById('config-color-input').value;
             const logId = document.getElementById('config-log-input').value;
-            const lbId = document.getElementById('config-leaderboard-input').value;
+            const lbId = document.getElementById('config-leaderboard-input').value ? document.getElementById('config-leaderboard-input').value : "";
             
             await fetch(`${API_URL}/config`, { 
                 method: 'PUT', 
@@ -1149,10 +1250,12 @@
         }
 
         async function deleteVouch(id) {
-            showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
-                await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
-                loadAllData(); showToast("Supprimé");
-            });
+            if(confirm("Supprimer ce vouch ?")) {
+                showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
+                    await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
+                    loadAllData(); showToast("Supprimé");
+                });
+            }
         }
 
         // --- HELPERS MODAL & UI ---
@@ -1176,7 +1279,6 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             
-            // Si on va sur la page comptabilité, on génère le rapport "Aujourd'hui" automatiquement
             if (view === 'accounting' && charts.revenue === null) {
                 generateReport('today');
             }
