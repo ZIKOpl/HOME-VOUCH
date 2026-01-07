@@ -120,6 +120,7 @@
             padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;
             cursor: pointer; position: relative;
         }
+        .user-info-display { display: flex; align-items: center; gap: 10px; }
         .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { font-size: 0.9rem; }
         .user-name { font-weight: 600; color: white; }
@@ -184,13 +185,19 @@
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
-        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
+        }
         .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
         .btn-edit {
-            background: rgba(249, 115, 22, 0.1); color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px;
+            background: rgba(249, 115, 22, 0.1); /* Orange clair */
+            color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px;
         }
-        .btn-edit:hover { background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+        .btn-edit:hover {
+            background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
 
         /* Modals */
         .modal-overlay {
@@ -200,6 +207,7 @@
             opacity: 0; transition: opacity 0.3s; padding: 1rem;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
+
         .modal {
             background: #1e293b; border: 1px solid var(--border); width: 100%;
             max-width: 450px; border-radius: 16px; padding: 2rem;
@@ -223,13 +231,10 @@
         .btn-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .btn-cancel:hover { background: rgba(255,255,255,0.05); color: white; }
 
+        /* Utilities */
         .hidden { display: none !important; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
         .badge-star { background: rgba(240, 178, 50, 0.15); color: #fbbf24; }
-        .badge-log { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); font-size: 0.7rem; border-radius: 10px; padding: 2px 6px; }
-        .badge-log.creation { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .badge-log.modification { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-        .badge-log.deletion { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         
         .toast {
             position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white;
@@ -255,21 +260,19 @@
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
             background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
         }
-        .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .date-filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .date-filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
-        .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; }
-        .btn-report:hover { background: #059669; }
+        .date-presets {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+        }
+        .preset-btn {
+            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border);
+            padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        }
+        .preset-btn:hover, .preset-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
 
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
         .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; height: 350px; }
 
-        /* --- LOGS SECTION --- */
-        .logs-container {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; overflow: hidden; width: 100%;
-        }
-
+        /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 768px) {
             #dashboard-app { flex-direction: column; }
             .sidebar {
@@ -282,10 +285,13 @@
             .grid-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
             .stat-value { font-size: 1.8rem; }
             .stat-icon { font-size: 1.5rem; }
-            .accounting-header { flex-direction: column; align-items: stretch; }
-            .btn-report { margin-left: 0; }
+            .accounting-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .date-presets { overflow-x: auto; }
             .charts-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; padding: 1.5rem; }
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
+            .login-container { padding: 1.5rem; }
+            .login-logo { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -336,9 +342,6 @@
                 <button class="nav-btn" onclick="router('paiements', this)">
                     <i class="fa-solid fa-wallet"></i> Paiements
                 </button>
-                <button class="nav-btn" onclick="router('logs', this)">
-                    <i class="fa-solid fa-list-ul"></i> Logs
-                </button>
                 <button class="nav-btn" onclick="router('config', this)">
                     <i class="fa-solid fa-sliders"></i> Configuration
                 </button>
@@ -353,8 +356,8 @@
                     </div>
                 </div>
                 <!-- Menu Déroulant PC -->
-                <div class="user-menu" id="user-menu" style="position:absolute; bottom:110%; left:0; width:100%; background:#1e293b; border:1px solid var(--border); border-radius:8px; padding:5px; display:none; flex-direction:column; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5);">
-                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()" style="color:var(--danger); text-decoration:none; padding:10px; border-radius:4px; transition:0.2s; display:flex; align-items:center; gap:8px;">
+                <div class="user-menu" id="user-menu">
+                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()">
                         <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
                     </a>
                 </div>
@@ -390,7 +393,7 @@
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th>Type</th><th>Détails</th><th>Auteur</th><th>Date</th></tr></thead>
+                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th><th>Qté</th></tr></thead>
                             <tbody id="dashboard-table-body"></tbody>
                         </table>
                     </div>
@@ -404,14 +407,14 @@
                 <!-- PRESETS BUTTONS -->
                 <div class="accounting-header">
                     <div style="color:var(--text-muted); font-size:0.9rem;">Période d'analyse :</div>
-                    <div class="date-filters">
-                        <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">Aujourd'hui</button>
-                        <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">7 Jours</button>
-                        <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">1 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('90d')" id="btn-preset-90d" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">3 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('180d')" id="btn-preset-180d" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">6 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('365d')" id="btn-preset-365d" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">1 An</button>
-                        <button class="preset-btn" onclick="generateReport('all')" id="btn-preset-all" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">Tout le temps</button>
+                    <div class="date-presets">
+                        <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today">Aujourd'hui</button>
+                        <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d">7 Jours</button>
+                        <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d">1 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('90d')" id="btn-preset-90d">3 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('180d')" id="btn-preset-180d">6 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('365d')" id="btn-preset-365d">1 An</button>
+                        <button class="preset-btn" onclick="generateReport('all')" id="btn-preset-all">Tout le temps</button>
                     </div>
                 </div>
 
@@ -528,23 +531,6 @@
                 </div>
             </section>
 
-            <!-- LOGS SECTION -->
-            <section id="view-logs" class="hidden">
-                <h2 class="header-title">Journal d'Activité</h2>
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Historique complet des actions</h3>
-                        <button class="btn-add" onclick="exportLogs()" style="background:var(--text-muted);"><i class="fa-solid fa-download"></i> Exporter</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead><tr><th>Heure</th><th>Action</th><th>Élément</th><th>Détails</th><th>Auteur</th></tr></thead>
-                            <tbody id="logs-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
             <!-- CONFIG -->
             <section id="view-config" class="hidden">
                 <h2 class="header-title">Configuration Globale</h2>
@@ -556,6 +542,10 @@
                     <div class="form-group">
                         <label class="form-label">Log Channel ID</label>
                         <input type="text" id="config-log-input" class="form-input" placeholder="123456...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Leaderboard Channel ID</label>
+                        <input type="text" id="config-leaderboard-input" class="form-input" placeholder="ID du salon du leaderboard">
                     </div>
                     <button class="btn-submit" onclick="saveConfig()">Sauvegarder la configuration</button>
                 </div>
@@ -706,10 +696,9 @@
         const API_URL = window.location.origin + "/api";
 
         // --- ETAT GLOBAL ---
-        let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {}, user: {} };
-        let pendingAction = null;
-        let charts = { revenue: null, sellers: null, items: null };
-        let activityLogs = []; // SYSTEME DE LOGS LOCAL
+        let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {} };
+        let pendingAction = null; 
+        let charts = { revenue: null, sellers: null, items: null }; // Stockage Chart.js
 
         // --- UI UTILS ---
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
@@ -720,7 +709,11 @@
 
         // --- LOGOUT SYSTEM ---
         function openLogoutModal() { document.getElementById('modal-logout').classList.add('active'); }
-        function performLogout() { localStorage.removeItem('discord_token'); window.location.href = window.location.pathname; }
+        function performLogout() { 
+            localStorage.removeItem('discord_token'); 
+            // Rechargement propre de la page
+            window.location.href = window.location.pathname; 
+        }
 
         function discordLogin() {
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.href)}&response_type=token&scope=identify%20guilds`;
@@ -733,18 +726,19 @@
             if (!token) return showLogin();
 
             try {
-                const res = await fetch(`${API_URL}/auth/verify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token }) });
+                const res = await fetch(`${API_URL}/auth/verify`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token })
+                });
                 const data = await res.json();
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
+                    // Nettoyer l'URL pour éviter le bug Discord
                     history.pushState("", document.title, window.location.pathname);
                     
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
                     document.getElementById('user-avatar-mobile').src = data.avatar;
-                    db.user = { tag: data.username }; // Pour les logs
-                    
                     showDashboard();
                     loadAllData();
                 } else {
@@ -758,67 +752,6 @@
         function showLogin() { document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-app').classList.add('hidden'); }
         function showDashboard() { document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
 
-        // --- SYSTEME DE LOGS ---
-        function logAction(type, entityName, details) {
-            const now = new Date();
-            const logEntry = {
-                date: now,
-                timestamp: now.getTime(),
-                type: type, // CRÉATION, MODIFICATION, SUPPRESSION
-                entity: entityName, // Vendeur, Item, etc.
-                details: details,
-                author: db.user.tag || "Utilisateur"
-            };
-            // Ajouter au début du tableau
-            activityLogs.unshift(logEntry);
-            renderLogs();
-        }
-
-        function renderLogs() {
-            const tbody = document.getElementById('logs-table-body');
-            if(activityLogs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucune activité enregistrée.</td></tr>`;
-                return;
-            }
-
-            // Formatage de la date
-            tbody.innerHTML = activityLogs.map(log => {
-                let badgeClass = "badge-log";
-                let typeText = "";
-                
-                if(log.type === 'CRÉATION') { badgeClass += " creation"; typeText = "Ajout"; }
-                else if(log.type === 'MODIFICATION') { badgeClass += " modification"; typeText = "Modif"; }
-                else if(log.type === 'SUPPRESSION') { badgeClass += " deletion"; typeText = "Supp"; }
-
-                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
-
-                return `
-                    <tr>
-                        <td style="color:var(--text-muted); font-size:0.85rem;">${dateStr}</td>
-                        <td><span class="${badgeClass}">${typeText}</span></td>
-                        <td style="font-weight:600;">${log.entity}</td>
-                        <td style="color:var(--text-muted);">${log.details}</td>
-                        <td style="color:var(--text-muted); font-size:0.9rem;">${log.author}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function exportLogs() {
-            let csvContent = "data:text/csv;charset=utf-8,Type,Entité,Détails,Auteur,Date\n";
-            activityLogs.forEach(log => {
-                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR');
-                csvContent += `${log.type},${log.entity},${log.details},${log.author},${dateStr}\n`;
-            });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "activite_site_logs.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         // --- DATA FETCHING ---
         async function loadAllData() {
             try {
@@ -827,7 +760,7 @@
                     fetch(`${API_URL}/vendeurs`),
                     fetch(`${API_URL}/items`),
                     fetch(`${API_URL}/paiements`),
-                    fetch(`${API_URL}/config`)
+                    fetch(`${API_URL}/config`) // Récupérer la config aussi
                 ]);
 
                 db.vouches = await vRes.json();
@@ -836,6 +769,7 @@
                 db.paiements = await pRes.json();
                 db.config = await cRes.json();
 
+                // Remplir les inputs de configuration si existe
                 if(db.config) {
                     if(db.config.embedColor) document.getElementById('config-color-input').value = db.config.embedColor;
                     if(db.config.logChannelId) document.getElementById('config-log-input').value = db.config.logChannelId;
@@ -856,31 +790,15 @@
             document.getElementById('stat-rating').textContent = avg;
 
             const tbody = document.getElementById('dashboard-table-body');
-            // On affiche les logs récents si disponibles, sinon les vouches récents
-            if (activityLogs.length > 0) {
-                tbody.innerHTML = activityLogs.slice(0, 5).map(log => {
-                    let icon = log.type === 'SUPPRESSION' ? 'trash' : (log.type === 'MODIFICATION' ? 'pencil' : 'plus');
-                    let color = log.type === 'SUPPRESSION' ? 'var(--danger)' : (log.type === 'MODIFICATION' ? 'var(--warning)' : 'var(--success)');
-                    
-                    return `
-                        <tr>
-                            <td><i class="fa-solid fa-${icon}" style="color:${color}"></i></td>
-                            <td style="font-weight:600;">${log.entity}</td>
-                            <td style="color:var(--text-muted);">${log.details}</td>
-                            <td style="color:var(--text-muted); font-size:0.9rem;">${new Date(log.timestamp).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</td>
-                        </tr>
-                    `;
-                }).join('');
-            } else {
-                tbody.innerHTML = db.vouches.slice(0,5).map(v => `
-                    <tr>
-                        <td><i class="fa-solid fa-star" style="color:var(--primary)"></i> Vouch</td>
-                        <td style="font-weight:600;">${v.item}</td>
-                        <td style="color:var(--text-muted);">${v.authorTag} -> ${v.vendeurName}</td>
-                        <td style="color:var(--text-muted); font-size:0.9rem;">${new Date(v.createdAt).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</td>
-                    </tr>
-                `).join('');
-            }
+            tbody.innerHTML = db.vouches.slice(0,5).map(v => `
+                <tr>
+                    <td>${v.authorTag}</td>
+                    <td>${v.vendeurName}</td>
+                    <td><span class="badge badge-star">${v.note}/5</span></td>
+                    <td style="color:var(--text-muted)">${v.item}</td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
+                </tr>
+            `).join('');
         }
 
         function renderVouches() {
@@ -906,9 +824,8 @@
                     <td style="font-family:monospace; color:var(--primary)">${v.discordId}</td>
                     <td>${v.name}</td>
                     <td>
-                        <!-- ORDRE MODIFIÉ : DROITE À GAUCHE, EDIT À DROITE -->
-                        <button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button>
                         <button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -919,8 +836,8 @@
                 <tr>
                     <td>${i.name}</td>
                     <td>
-                        <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
                         <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -931,34 +848,63 @@
                 <tr>
                     <td>${p.name}</td>
                     <td>
-                        <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
                         <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // --- COMPTABILITÉ ---
-        function parsePrice(priceStr) { return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0; }
+        // --- COMPTABILITÉ (LE NOUVEAU TRUC) ---
 
+        // Helper: Extraire prix en float
+        function parsePrice(priceStr) {
+            return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0;
+        }
+
+        // Logique des présélections de dates
         function getPresetDates(preset) {
             const end = new Date();
             const start = new Date();
+            
             end.setHours(23, 59, 59, 999);
+
             switch(preset) {
-                case 'today': start.setHours(0, 0, 0, 0); break;
-                case '7d': start.setDate(start.getDate() - 7); break;
-                case '30d': start.setDate(start.getDate() - 30); break;
-                case '90d': start.setDate(start.getDate() - 90); break;
-                case '180d': start.setDate(start.getDate() - 180); break;
-                case '365d': start.setFullYear(start.getFullYear() - 1); break;
-                case 'all': if(db.vouches.length > 0) start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt)); else start.setTime(new Date()); break;
-                default: return null;
+                case 'today':
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '7d':
+                    start.setDate(start.getDate() - 7);
+                    break;
+                case '30d':
+                    start.setDate(start.getDate() - 30);
+                    break;
+                case '90d':
+                    start.setDate(start.getDate() - 90);
+                    break;
+                case '180d':
+                    start.setDate(start.getDate() - 180);
+                    break;
+                case '365d':
+                    start.setFullYear(start.getFullYear() - 1);
+                    break;
+                case 'all':
+                    // Premier vouch de la DB
+                    if(db.vouches.length > 0) {
+                        start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt));
+                    } else {
+                        start.setTime(new Date()); // Si vide, auj
+                    }
+                    break;
+                default:
+                    return null;
             }
             return { start, end };
         }
 
+        // Fonction principale de génération
         async function generateReport(preset) {
+            // Bouton visuel
             document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
             const btn = document.getElementById(`btn-preset-${preset}`);
             if(btn) btn.classList.add('active');
@@ -967,38 +913,65 @@
             if (!dates) return;
 
             const { start, end } = dates;
-            const filteredVouches = db.vouches.filter(v => { const vDate = new Date(v.createdAt); return vDate >= start && vDate <= end; });
 
-            if (filteredVouches.length === 0) { resetAccountingStats(); return; }
+            // Filtrer les vouches
+            const filteredVouches = db.vouches.filter(v => {
+                const vDate = new Date(v.createdAt);
+                return vDate >= start && vDate <= end;
+            });
 
-            let totalRevenue = 0; let totalVolume = 0; let totalQuantity = 0;
-            const sellerRevenue = {}; const itemSales = {};
+            if (filteredVouches.length === 0) {
+                resetAccountingStats(); // Affiche 0 ou N/A si rien
+                return; 
+            }
+
+            // --- CALCULS ---
+            let totalRevenue = 0;
+            let totalVolume = 0;
+            let totalQuantity = 0;
+            const sellerRevenue = {};
+            const itemSales = {};
 
             filteredVouches.forEach(v => {
                 const price = parsePrice(v.prix);
-                const qty = v.quantity || 1;
+                const qty = v.quantity || 1; // Si pas de quantité, on considère 1 (vente d'un service)
                 const revenue = price * qty;
-                totalRevenue += revenue; totalVolume += 1; totalQuantity += qty;
+
+                totalRevenue += revenue;
+                totalVolume += 1;
+                totalQuantity += qty;
+
+                // Par vendeur
                 if (!sellerRevenue[v.vendeurId]) sellerRevenue[v.vendeurId] = 0;
                 sellerRevenue[v.vendeurId] += revenue;
+
+                // Par item
                 if (!itemSales[v.item]) itemSales[v.item] = 0;
                 itemSales[v.item] += qty;
             });
 
-            document.getElementById('acc-revenue').textContent = (totalRevenue > 0 ? totalRevenue.toFixed(2) : "0.00") + " €";
+            // --- MISE À JOUR UI ---
+            // Si y'a pas de vente, afficher N/A ou 0.00€
+            const money = totalRevenue > 0 ? totalRevenue.toFixed(2) + " €" : "0.00 €";
+            document.getElementById('acc-revenue').textContent = money;
+            
             document.getElementById('acc-volume').textContent = totalVolume;
             document.getElementById('acc-qty').textContent = totalQuantity;
 
-            let topSellerName = totalVolume > 0 ? "-" : "N/A"; let topSellerRev = "0.00 €";
+            // Top Vendeur
+            let topSellerName = totalVolume > 0 ? "-" : "N/A";
+            let topSellerRev = "0.00 €";
             const sortedSellers = Object.entries(sellerRevenue).sort((a, b) => b[1] - a[1]);
             if (sortedSellers.length > 0) {
-                const topId = sortedSellers[0][0]; topSellerRev = sortedSellers[0][1].toFixed(2) + " €";
+                const topId = sortedSellers[0][0];
+                topSellerRev = sortedSellers[0][1].toFixed(2) + " €";
                 const sellerObj = db.vendeurs.find(v => v.discordId === topId);
                 topSellerName = sellerObj ? sellerObj.name : "ID Inconnu";
             }
             document.getElementById('acc-top-seller').textContent = topSellerName;
             document.getElementById('acc-top-seller-val').textContent = topSellerRev;
 
+            // --- CHARTS (Chart.js) ---
             renderCharts(filteredVouches, sellerRevenue, itemSales);
         }
 
@@ -1008,10 +981,15 @@
             document.getElementById('acc-qty').textContent = "0";
             document.getElementById('acc-top-seller').textContent = "-";
             document.getElementById('acc-top-seller-val').textContent = "0.00 €";
-            if(charts.revenue) charts.revenue.destroy(); if(charts.sellers) charts.sellers.destroy(); if(charts.items) charts.items.destroy();
+            
+            if(charts.revenue) charts.revenue.destroy();
+            if(charts.sellers) charts.sellers.destroy();
+            if(charts.items) charts.items.destroy();
         }
 
         function renderCharts(vouches, sellers, items) {
+            // 1. Graphique Revenu Mensuel (Ligne)
+            // On groupe par jour pour le graphe
             const dailyRevenue = {};
             vouches.forEach(v => {
                 const day = new Date(v.createdAt).toLocaleDateString('fr-FR');
@@ -1024,28 +1002,71 @@
             if (charts.revenue) charts.revenue.destroy();
             charts.revenue = new Chart(ctxRev, {
                 type: 'line',
-                data: { labels: Object.keys(dailyRevenue), datasets: [{ label: 'Revenu (€)', data: Object.values(dailyRevenue), borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.2)', tension: 0.4, fill: true }] },
+                data: {
+                    labels: Object.keys(dailyRevenue),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: Object.values(dailyRevenue),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
             });
 
+            // 2. Graphique Top Vendeurs (Barres)
             const ctxSellers = document.getElementById('chart-sellers').getContext('2d');
             if (charts.sellers) charts.sellers.destroy();
-            const sortedSellersData = Object.entries(sellers).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => {
-                const vnd = db.vendeurs.find(v => v.discordId === entry[0]);
-                return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] };
-            });
+            
+            // Preparer data (Nom + Revenu)
+            const sortedSellersData = Object.entries(sellers)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5) // Top 5
+                .map(entry => {
+                    const vnd = db.vendeurs.find(v => v.discordId === entry[0]);
+                    return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] };
+                });
+
             charts.sellers = new Chart(ctxSellers, {
                 type: 'bar',
-                data: { labels: sortedSellersData.map(d => d.name), datasets: [{ label: 'Revenu (€)', data: sortedSellersData.map(d => d.value), backgroundColor: ['rgba(99, 102, 241, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(99, 102, 241, 0.8)'] }] },
+                data: {
+                    labels: sortedSellersData.map(d => d.name),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: sortedSellersData.map(d => d.value),
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(99, 102, 241, 0.8)'
+                        ]
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
+            // 3. Graphique Top Items (Barres)
             const ctxItems = document.getElementById('chart-items').getContext('2d');
             if (charts.items) charts.items.destroy();
-            const sortedItemsData = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => ({ name: entry[0], value: entry[1] }));
+
+            const sortedItemsData = Object.entries(items)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(entry => ({ name: entry[0], value: entry[1] }));
+
             charts.items = new Chart(ctxItems, {
                 type: 'bar',
-                data: { labels: sortedItemsData.map(d => d.name), datasets: [{ label: 'Qté Vendue', data: sortedItemsData.map(d => d.value), backgroundColor: '#10b981' }] },
+                data: {
+                    labels: sortedItemsData.map(d => d.name),
+                    datasets: [{
+                        label: 'Qté Vendue',
+                        data: sortedItemsData.map(d => d.value),
+                        backgroundColor: '#10b981'
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
             });
         }
@@ -1055,33 +1076,29 @@
             e.preventDefault();
             const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value };
             await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Vendeur', data.name);
             closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté");
         }
         async function submitEditVendeur(e) {
             e.preventDefault();
             const id = document.getElementById('edit-vnd-id').value;
-            const data = { discordId: document.getElementById('edit-vnd-id-display').value, name: document.getElementById('edit-vnd-name').value };
+            const data = {
+                discordId: document.getElementById('edit-vnd-id-display').value,
+                name: document.getElementById('edit-vnd-name').value
+            };
             await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Vendeur', data.name);
             closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
         }
         async function deleteVendeur(id) {
-            const vnd = db.vendeurs.find(v => v._id === id);
-            if(confirm(`Supprimer le vendeur ${vnd.name} ?`)) {
-                showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
-                    await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Vendeur', vnd.name);
-                    loadAllData(); showToast("Vendeur supprimé");
-                });
-            }
+            showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
+                await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Vendeur supprimé");
+            });
         }
 
         async function submitItem(e) {
             e.preventDefault();
             const data = { name: document.getElementById('itm-name').value };
             await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Item', data.name);
             closeModal('modal-item'); loadAllData(); showToast("Item ajouté");
         }
         async function submitEditItem(e) {
@@ -1089,25 +1106,19 @@
             const id = document.getElementById('edit-itm-id').value;
             const data = { name: document.getElementById('edit-itm-name').value };
             await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Item', data.name);
             closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
         }
         async function deleteItem(id) {
-            const itm = db.items.find(i => i._id === id);
-            if(confirm(`Supprimer l'item ${itm.name} ?`)) {
-                showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
-                    await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Item', itm.name);
-                    loadAllData(); showToast("Item supprimé");
-                });
-            }
+            showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
+                await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Item supprimé");
+            });
         }
 
         async function submitPaiement(e) {
             e.preventDefault();
             const data = { name: document.getElementById('pay-name').value };
             await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Paiement', data.name);
             closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté");
         }
         async function submitEditPaiement(e) {
@@ -1115,24 +1126,20 @@
             const id = document.getElementById('edit-pay-id').value;
             const data = { name: document.getElementById('edit-pay-name').value };
             await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Paiement', data.name);
             closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
         }
         async function deletePaiement(id) {
-            const pay = db.paiements.find(p => p._id === id);
-            if(confirm(`Supprimer le paiement ${pay.name} ?`)) {
-                showConfirm("Supprimer Paiement", "", async () => {
-                    await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Paiement', pay.name);
-                    loadAllData(); showToast("Paiement supprimé");
-                });
-            }
+            showConfirm("Supprimer Paiement", "", async () => {
+                await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Paiement supprimé");
+            });
         }
 
         async function saveConfig() {
             const color = document.getElementById('config-color-input').value;
             const logId = document.getElementById('config-log-input').value;
-            const lbId = document.getElementById('config-leaderboard-input').value ? document.getElementById('config-leaderboard-input').value : "";
+            const lbId = document.getElementById('config-leaderboard-input').value;
+            
             await fetch(`${API_URL}/config`, { 
                 method: 'PUT', 
                 headers: {'Content-Type':'application/json'}, 
@@ -1142,21 +1149,39 @@
         }
 
         async function deleteVouch(id) {
-            if(confirm("Supprimer ce vouch ?")) {
-                showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
-                    await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
-                    loadAllData(); showToast("Supprimé");
-                });
-            }
+            showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
+                await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Supprimé");
+            });
         }
 
         // --- HELPERS MODAL & UI ---
+        function showConfirm(title, msg, actionCallback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent = msg;
+            pendingAction = actionCallback;
+            document.getElementById('modal-confirm').classList.add('active');
+        }
+
+        document.getElementById('confirm-btn-action').onclick = () => {
+            if(pendingAction) pendingAction();
+            closeModal('modal-confirm');
+            pendingAction = null;
+        };
+
         function router(view, btn) {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-'+view).classList.remove('hidden');
+            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            if(view === 'accounting' && charts.revenue === null) { generateReport('today'); }
+            
+            // Si on va sur la page comptabilité, on génère le rapport "Aujourd'hui" automatiquement
+            if (view === 'accounting' && charts.revenue === null) {
+                generateReport('today');
+            }
+
+            // Fermer sidebar sur mobile après click
             if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
         }
 
@@ -1178,19 +1203,6 @@
             document.getElementById('edit-pay-name').value = name;
             openModal('modal-paiement-edit');
         }
-
-        function showConfirm(title, msg, actionCallback) {
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-msg').textContent = msg;
-            pendingAction = actionCallback;
-            document.getElementById('modal-confirm').classList.add('active');
-        }
-
-        document.getElementById('confirm-btn-action').onclick = () => {
-            if(pendingAction) pendingAction();
-            closeModal('modal-confirm');
-            pendingAction = null;
-        };
 
         // Init
         document.addEventListener('DOMContentLoaded', checkLogin);
