@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Home Market - Vitrine & Admin</title>
+    <title>Admin Dashboard VouchBot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Librairie Graphiques -->
@@ -12,9 +12,7 @@
     <style>
         :root {
             --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.6);
-            --discord-grey: #313338;
-            --discord-border: #1e1f22;
+            --bg-card: rgba(30, 41, 59, 0.7);
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --accent: #8b5cf6;
@@ -33,188 +31,201 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%), 
-                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 20%);
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
             background-attachment: fixed;
             color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-        /* --- LANDING HEADER (PUBLIC) --- */
-        .landing-header {
-            position: fixed; top: 0; left: 0; width: 100%;
-            height: 80px;
-            background: rgba(15, 23, 42, 0.9);
+        /* --- LOGIN PAGE --- */
+        #login-page {
+            height:100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding:1rem;
+        }
+
+        .login-container {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .login-logo { font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .login-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
+
+        .btn-discord {
+            background: #5865F2; color: white; width: 100%; padding: 1rem;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+        }
+        .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(88, 101, 242, 0.4); }
+
+        /* --- DASHBOARD LAYOUT --- */
+        #dashboard-app { display: none; height: 100vh; display: flex; position: relative; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 2rem;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
             z-index: 1000;
         }
 
-        .brand-area { display: flex; align-items: center; gap: 12px; }
-        .brand-logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .brand-icon { font-size: 1.5rem; color: var(--primary); }
+        .brand {
+            font-size: 1.5rem; font-weight: 700; color: white;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;
+        }
+        .brand i { color: var(--primary); }
 
-        .auth-area { display: flex; align-items: center; gap: 15px; }
-        .btn-login {
-            background: #5865F2; color: white; padding: 0.6rem 1.2rem;
-            border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
-            transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            width: 100%; text-align: left; padding: 0.85rem 1rem;
+            border-radius: 12px; cursor: pointer; font-size: 0.95rem;
+            font-weight: 500; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s ease; margin-bottom: 0.5rem;
         }
-        .btn-login:hover { background: #4752C4; }
-
-        /* --- USER PROFILE (Membre connecté, Non-Admin) --- */
-        .user-profile { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-info { display: flex; flex-direction: column; }
-        .user-tag { font-weight: 600; font-size: 1rem; color: white; }
-        .user-status { font-size: 0.75rem; color: var(--text-muted); }
-        .btn-logout { color: var(--text-muted); cursor: pointer; transition: 0.2s; border: none; background: none; font-size: 1.1rem; }
-        .btn-logout:hover { color: var(--danger); }
-
-        /* --- LANDING CONTENT (GRID) --- */
-        .landing-content {
-            padding: 8rem 2rem 4rem 2rem; /* Espace pour le header */
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .landing-title {
-            text-align: center; font-size: 3rem; font-weight: 800;
-            margin-bottom: 2rem; background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .vouch-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
-        }
-
-        /* --- CARD STYLE "DISCORD EMBED" --- */
-        .vouch-card {
-            background-color: var(--discord-grey);
-            border: 1px solid var(--discord-border);
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            display: flex; flex-direction: column;
-        }
-        .vouch-card:hover { transform: translateY(-3px); }
-
-        /* Header Embed */
-        .embed-header {
-            padding: 1rem;
-            display: flex; gap: 12px;
-            align-items: center;
-        }
-        .embed-avatar {
-            width: 40px; height: 40px; border-radius: 50%;
-            border: 2px solid var(--primary);
-            object-fit: cover;
-        }
-        .embed-title {
-            font-size: 1.1rem; font-weight: 600; color: white; flex: 1;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .embed-title-name { display: flex; flex-direction: column; }
-        .embed-title-name span:last-child { font-size: 0.75rem; font-weight: 400; color: #b9bbbe; }
-        .embed-icon { color: #b9bbbe; font-size: 1.2rem; }
-
-        /* Body Embed */
-        .embed-body {
-            padding: 0.5rem 1rem 1rem;
-            border-top: 1px solid var(--discord-border);
-            border-bottom: 1px solid var(--discord-border);
-        }
-        .embed-description {
-            color: #dcddde;
-            font-size: 0.95rem; line-height: 1.5;
-            margin-bottom: 0.5rem;
-        }
-        .embed-fields {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
-        }
-        .embed-field-name { color: #b9bbbe; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
-        .embed-field-value { color: #dcddde; font-size: 0.9rem; }
-        .embed-field-value.bold { color: white; font-weight: 600; }
-
-        /* Footer Embed */
-        .embed-footer {
-            padding: 0.5rem 1rem;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.05);
-        }
-        .embed-timestamp { font-size: 0.75rem; color: #72767d; }
-        .embed-author { display: flex; align-items: center; gap: 8px; color: white; font-size: 0.85rem; }
-        .embed-author-img { width: 20px; height: 20px; border-radius: 50%; }
-
-        /* --- LOAD MORE BUTTON --- */
-        .load-more-container { text-align: center; margin-top: 4rem; padding-bottom: 4rem; }
-        .btn-load-more {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--border);
-            color: white; padding: 0.8rem 2rem; border-radius: 50px;
-            cursor: pointer; transition: 0.2s; font-weight: 600;
-        }
-        .btn-load-more:hover { background: var(--primary); border-color: var(--primary); }
-
-        /* --- DASHBOARD ADMIN (HIDDEN BY DEFAULT) --- */
-        #dashboard-app { display: none; height: 100vh; display: flex; position: relative; }
-        .sidebar {
-            width: 260px; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(10px);
-            border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem;
-            transition: transform 0.3s ease; z-index: 1001;
-        }
-        .nav-btn { background: transparent; border: none; color: var(--text-muted); width: 100%; text-align: left; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease; margin-bottom: 0.5rem; }
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-btn.active { background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent); color: var(--primary); border-left: 3px solid var(--primary); }
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; }
-        .btn-add { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; }
-        .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
-        
-        /* --- ADMIN DATA TABLES --- */
-        .table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; width: 100%; margin-bottom: 2rem; }
-        .table-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); }
-        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; }
-        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
-        .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); } .btn-del:hover { background: var(--danger); }
-        .btn-edit { background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px; } .btn-edit:hover { background: #f97316; }
+        .nav-btn.active { 
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent);
+            color: var(--primary); border-left: 3px solid var(--primary);
+        }
 
-        /* --- ADMIN CHARTS & STATS --- */
+        .user-panel {
+            margin-top: auto; display: flex; align-items: center; gap: 10px;
+            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;
+            cursor: pointer; position: relative;
+        }
+        .user-info-display { display: flex; align-items: center; gap: 10px; }
+        .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info { font-size: 0.9rem; }
+        .user-name { font-weight: 600; color: white; }
+        .user-status { font-size: 0.75rem; color: var(--success); }
+
+        /* USER MENU DROPDOWN (PC) */
+        .user-menu {
+            position: absolute; bottom: 110%; left: 0; width: 100%;
+            background: #1e293b; border: 1px solid var(--border); border-radius: 8px;
+            padding: 5px; display: none; flex-direction: column;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
+        .user-menu.show { display: flex; }
+        .user-menu-item {
+            padding: 10px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; border-radius: 4px; transition: 0.2s;
+        }
+        .user-menu-item:hover { background: rgba(255,255,255,0.1); }
+        .user-menu-item.logout { color: var(--danger); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
+        }
+        .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Cards Grid */
         .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.3s; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; position: relative;
+            overflow: hidden; transition: transform 0.3s;
+        }
         .stat-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.3); }
         .stat-icon { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; color: rgba(255,255,255,0.05); }
         .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
         .stat-value { font-size: 2.5rem; font-weight: 700; color: white; }
         .stat-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; }
 
-        .accounting-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem; }
-        .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; } .btn-report:hover { background: #059669; }
-        .preset-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
-        .preset-btn:hover, .preset-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
-        .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; height: 350px; }
+        /* Data Tables */
+        .table-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .table-header {
+            padding: 1.5rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;
+        }
+        .table-title { font-size: 1.1rem; font-weight: 600; }
 
-        /* --- MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; padding: 0.6rem 1.2rem;
+            border-radius: 8px; font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap;
+        }
+        .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); white-space: nowrap; }
+        td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; white-space: nowrap; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
+        }
+        .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .btn-del:hover { background: var(--danger); color: white; }
+        .btn-edit {
+            background: rgba(249, 115, 22, 0.1); /* Orange clair */
+            color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px;
+        }
+        .btn-edit:hover {
+            background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s; padding: 1rem;
+        }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal { background: #1e293b; border: 1px solid var(--border); width: 100%; max-width: 450px; border-radius: 16px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s; }
+
+        .modal {
+            background: #1e293b; border: 1px solid var(--border); width: 100%;
+            max-width: 450px; border-radius: 16px; padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: transform 0.3s;
+        }
         .modal-overlay.active .modal { transform: scale(1); }
         .modal h2 { margin-bottom: 1.5rem; color: white; }
         .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        
         .form-group { margin-bottom: 1.2rem; }
         .form-label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
-        .form-input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit; }
+        .form-input, .form-select, .form-date {
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit;
+        }
         .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+
         .btn-submit { width: 100%; background: var(--primary); color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-submit:hover { background: var(--primary-hover); }
         .btn-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
@@ -224,126 +235,188 @@
         .hidden { display: none !important; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
         .badge-star { background: rgba(240, 178, 50, 0.15); color: #fbbf24; }
+        
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white;
+            padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px);
+            opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* --- STYLES POUR LE SYSTÈME DE LOGS (NOUVEAU) --- */
         .badge-log { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); font-size: 0.7rem; border-radius: 10px; padding: 2px 6px; }
         .badge-log.creation { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .badge-log.modification { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
         .badge-log.deletion { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px); opacity: 0; transition: 0.3s; z-index: 2001; left: 30px; right: auto; width: calc(100% - 60px); text-align: center; }
-        .toast.show { transform: translateY(0); opacity: 1; }
+        .logs-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MOBILE HEADER (HAMBURGER) --- */
+        .mobile-header {
+            display: none; height: 60px; background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px); align-items: center; justify-content: space-between;
+            padding: 0 1rem; border-bottom: 1px solid var(--border);
+        }
+        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
+        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
+
+        /* --- ACCOUNTING SECTION --- */
+        .accounting-header {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
+        }
+        .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .date-filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .date-filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; }
+        .btn-report:hover { background: #059669; }
+        .preset-btn {
+            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border);
+            padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        }
+        .preset-btn:hover, .preset-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; height: 350px; }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            .landing-header { padding: 0 1rem; }
-            .landing-content { padding: 6rem 1rem 4rem 1rem; }
-            .landing-title { font-size: 2rem; }
-            .vouch-grid { grid-template-columns: 1fr; }
-            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5); z-index: 1002; }
+            #dashboard-app { flex-direction: column; }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
+                transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
             .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; z-index: 900; }
             .main-content { padding: 5rem 1rem 1rem 1rem; }
             .grid-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
             .stat-value { font-size: 1.8rem; }
+            .stat-icon { font-size: 1.5rem; }
             .accounting-header { flex-direction: column; align-items: stretch; gap: 1rem; }
             .btn-report { margin-left: 0; }
             .charts-grid { grid-template-columns: 1fr; }
-            .modal { max-width: 100%; padding: 1.5rem; }
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- --- MOBILE HEADER (ADMIN ONLY) --- -->
-    <div id="mobile-header" class="hidden" style="display:none; height:60px; background:rgba(15,23,42,0.95); backdrop-filter:blur(10px); align-items:center; justify-content:space-between; padding:0 1rem; border-bottom:1px solid var(--border); position:fixed; top:0; left:0; width:100%; z-index:900;">
-        <button style="font-size:1.5rem; color:white; background:none; border:none; cursor:pointer;" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <div style="font-weight:700; color:white;">ADMIN</div>
+    <!-- --- MOBILE HEADER --- -->
+    <div id="mobile-header" class="mobile-header">
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div class="mobile-logo">HOME MARKET</div>
+        <img id="user-avatar-mobile" src="" onclick="openLogoutModal()" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary);" alt="User">
     </div>
 
-    <!-- --- LANDING PAGE HEADER (PUBLIC) --- -->
-    <header class="landing-header">
-        <div class="brand-area">
-            <i class="fa-solid fa-layer-group brand-icon"></i>
-            <div class="brand-logo">HOME MARKET</div>
-        </div>
-        
-        <div class="auth-area">
-            <!-- Si connecté (Membre) -->
-            <div id="logged-in-area" class="user-profile hidden">
-                <img id="user-avatar-header" src="" alt="Avatar" class="user-avatar">
-                <div class="user-info">
-                    <div id="user-tag-header" class="user-tag">User</div>
-                    <div class="user-status">Membre Connecté</div>
-                </div>
-                <button class="btn-logout" onclick="performLogout()"><i class="fa-solid fa-power-off"></i></button>
-            </div>
-
-            <!-- Si Non connecté -->
-            <button id="login-btn-area" class="btn-login" onclick="discordLogin()">
-                <i class="fa-brands fa-discord"></i> Se connecter
+    <!-- --- LOGIN PAGE --- -->
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-logo"><i class="fa-solid fa-rocket"></i></div>
+            <h1 class="login-title">Gestion Vouch Bot</h1>
+            <p class="login-desc">Connectez-vous avec Discord pour accéder à l'interface d'administration sécurisée.</p>
+            <button class="btn-discord" onclick="discordLogin()">
+                <i class="fa-brands fa-discord"></i> Connexion Discord
             </button>
+            <p id="login-error" style="color:var(--danger); margin-top:1rem; display:none;"></p>
         </div>
-    </header>
+    </div>
 
-    <!-- --- VITRINE (PUBLIC) --- -->
-    <main id="landing-app">
-        <div class="landing-content">
-            <h1 class="landing-title">Dernières Activités</h1>
-            <div id="vouch-grid" class="vouch-grid">
-                <!-- Les Vouches sont injectées ici -->
-            </div>
-
-            <div class="load-more-container">
-                <button id="btn-load-more" class="btn-load-more hidden" onclick="loadMoreVouches()">Voir plus</button>
-            </div>
-        </div>
-    </main>
-
-    <!-- --- DASHBOARD APP (ADMIN) --- -->
-    <div id="dashboard-app">
+    <!-- --- DASHBOARD APP --- -->
+    <div id="dashboard-app" class="hidden">
         <nav class="sidebar" id="sidebar">
-            <div class="brand-area" style="margin-bottom: 2rem;">
-                <i class="fa-solid fa-layer-group brand-icon"></i>
-                <div class="brand-logo">ADMIN</div>
+            <div class="brand">
+                <i class="fa-solid fa-layer-group"></i> HOME MARKET
             </div>
-            <div>
-                <button class="nav-btn active" onclick="router('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Vue d'ensemble</button>
-                <button class="nav-btn" onclick="router('accounting', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Comptabilité</button>
-                <button class="nav-btn" onclick="router('vouches', this)"><i class="fa-solid fa-star"></i> Vouches</button>
-                <button class="nav-btn" onclick="router('vendeurs', this)"><i class="fa-solid fa-users"></i> Vendeurs</button>
-                <button class="nav-btn" onclick="router('items', this)"><i class="fa-solid fa-box-open"></i> Items</button>
-                <button class="nav-btn" onclick="router('paiements', this)"><i class="fa-solid fa-wallet"></i> Paiements</button>
-                <button class="nav-btn" onclick="router('logs', this)"><i class="fa-solid fa-list-ul"></i> Logs</button>
-                <button class="nav-btn" onclick="router('config', this)"><i class="fa-solid fa-sliders"></i> Configuration</button>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="router('dashboard', this)">
+                    <i class="fa-solid fa-chart-pie"></i> Vue d'ensemble
+                </button>
+                <button class="nav-btn" onclick="router('accounting', this)">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Comptabilité
+                </button>
+                <button class="nav-btn" onclick="router('vouches', this)">
+                    <i class="fa-solid fa-star"></i> Vouches
+                </button>
+                <button class="nav-btn" onclick="router('vendeurs', this)">
+                    <i class="fa-solid fa-users"></i> Vendeurs
+                </button>
+                <button class="nav-btn" onclick="router('items', this)">
+                    <i class="fa-solid fa-box-open"></i> Items
+                </button>
+                <button class="nav-btn" onclick="router('paiements', this)">
+                    <i class="fa-solid fa-wallet"></i> Paiements
+                </button>
+                <button class="nav-btn" onclick="router('logs', this)">
+                    <i class="fa-solid fa-list-ul"></i> Logs
+                </button>
+                <button class="nav-btn" onclick="router('config', this)">
+                    <i class="fa-solid fa-sliders"></i> Configuration
+                </button>
             </div>
             
-            <div class="user-profile" style="margin-top: auto; cursor: pointer;" onclick="openLogoutModal()">
-                <img id="user-avatar-admin" src="" alt="Avatar" class="user-avatar">
-                <div class="user-info">
-                    <div id="user-tag-admin" class="user-tag">Admin</div>
-                    <div class="user-status"><i class="fa-solid fa-circle" style="font-size:8px; color:var(--success);"></i> En ligne</div>
+            <div class="user-panel" onclick="toggleUserMenu()">
+                <div class="user-info-display">
+                    <img id="user-avatar" src="" alt="Avatar">
+                    <div class="user-info">
+                        <div id="user-name" class="user-name">Chargement...</div>
+                        <div class="user-status"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Connecté</div>
+                    </div>
                 </div>
-                <i class="fa-solid fa-right-from-bracket btn-logout" style="color:var(--text-muted);"></i>
+                <!-- Menu Déroulant PC -->
+                <div class="user-menu" id="user-menu">
+                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                    </a>
+                </div>
             </div>
         </nav>
 
         <main class="main-content">
+            
             <!-- DASHBOARD HOME -->
             <section id="view-dashboard">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Vue d'ensemble</h2>
+                <h2 class="header-title">Vue d'ensemble</h2>
                 <div class="grid-stats">
-                    <div class="stat-card"><i class="fa-solid fa-star stat-icon"></i><div class="stat-label">Total Vouches</div><div class="stat-value" id="stat-total">0</div></div>
-                    <div class="stat-card"><i class="fa-solid fa-users stat-icon"></i><div class="stat-label">Vendeurs Actifs</div><div class="stat-value" id="stat-vendors">0</div></div>
-                    <div class="stat-card"><i class="fa-solid fa-heart stat-icon"></i><div class="stat-label">Satisfaction</div><div class="stat-value" id="stat-rating">0.0</div></div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-star stat-icon"></i>
+                        <div class="stat-label">Total Vouches</div>
+                        <div class="stat-value" id="stat-total">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-users stat-icon"></i>
+                        <div class="stat-label">Vendeurs Actifs</div>
+                        <div class="stat-value" id="stat-vendors">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-heart stat-icon"></i>
+                        <div class="stat-label">Satisfaction</div>
+                        <div class="stat-value" id="stat-rating">0.0</div>
+                    </div>
                 </div>
 
                 <div class="table-container">
-                    <div class="table-header"><h3 style="font-size:1.1rem;">Activité Récente</h3></div>
-                    <table><thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th><th>Qté</th></tr></thead><tbody id="dashboard-table-body"></tbody></table>
+                    <div class="table-header">
+                        <h3 class="table-title">Activité Récente</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th><th>Qté</th></tr></thead>
+                            <tbody id="dashboard-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
             <!-- COMPTABILITÉ -->
             <section id="view-accounting" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Rapports de Comptabilité</h2>
+                <h2 class="header-title">Rapports de Comptabilité</h2>
+                
+                <!-- PRESETS BUTTONS -->
                 <div class="accounting-header">
                     <div style="color:var(--text-muted); font-size:0.9rem;">Période d'analyse :</div>
                     <div class="date-filters">
@@ -357,32 +430,54 @@
                     </div>
                 </div>
 
+                <!-- KPI CARDS -->
                 <div class="grid-stats">
                     <div class="stat-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
-                        <i class="fa-solid fa-sack-dollar stat-icon" style="color:var(--success);"></i><div class="stat-label">Chiffre d'Affaires</div><div class="stat-value" id="acc-revenue">0 €</div>
+                        <i class="fa-solid fa-sack-dollar stat-icon" style="color:var(--success);"></i>
+                        <div class="stat-label">Chiffre d'Affaires</div>
+                        <div class="stat-value" id="acc-revenue">0 €</div>
                         <div class="stat-sub">Revenue Totale (Prix * Qté)</div>
                     </div>
-                    <div class="stat-card"><i class="fa-solid fa-crown stat-icon" style="color:var(--warning);"></i><div class="stat-label">Top Vendeur</div><div class="stat-value" id="acc-top-seller">-</div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-crown stat-icon" style="color:var(--warning);"></i>
+                        <div class="stat-label">Top Vendeur</div>
+                        <div class="stat-value" id="acc-top-seller">-</div>
                         <div class="stat-sub" id="acc-top-seller-val">0 €</div>
                     </div>
-                    <div class="stat-card"><i class="fa-solid fa-chart-bar stat-icon" style="color:var(--primary);"></i><div class="stat-label">Volume Ventes</div><div class="stat-value" id="acc-volume">0</div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-chart-bar stat-icon" style="color:var(--primary);"></i>
+                        <div class="stat-label">Volume Ventes</div>
+                        <div class="stat-value" id="acc-volume">0</div>
                         <div class="stat-sub">Nombre de ventes total</div>
                     </div>
-                    <div class="stat-card"><i class="fa-solid fa-boxes-stacked stat-icon" style="color:var(--accent);"></i><div class="stat-label">Items Vendus</div><div class="stat-value" id="acc-qty">0</div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-boxes-stacked stat-icon" style="color:var(--accent);"></i>
+                        <div class="stat-label">Items Vendus</div>
+                        <div class="stat-value" id="acc-qty">0</div>
                         <div class="stat-sub">Quantité totale d'objets</div>
                     </div>
                 </div>
 
+                <!-- CHARTS -->
                 <div class="charts-grid">
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);">Évolution du Chiffre d'Affaires</h4><canvas id="chart-revenue"></canvas></div>
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);">Top Vendeurs</h4><canvas id="chart-sellers"></canvas></div>
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);">Top Items</h4><canvas id="chart-items"></canvas></div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Évolution du Chiffre d'Affaires</h4>
+                        <canvas id="chart-revenue"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Vendeurs</h4>
+                        <canvas id="chart-sellers"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Items</h4>
+                        <canvas id="chart-items"></canvas>
+                    </div>
                 </div>
             </section>
 
             <!-- VOUCHES -->
             <section id="view-vouches" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Gestion des Vouches</h2>
+                <h2 class="header-title">Gestion des Vouches</h2>
                 <div class="table-container">
                     <div class="table-header">
                         <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
@@ -398,10 +493,10 @@
 
             <!-- VENDEURS -->
             <section id="view-vendeurs" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Gestion des Vendeurs</h2>
+                <h2 class="header-title">Gestion des Vendeurs</h2>
                 <div class="table-container">
                     <div class="table-header">
-                        <h3 style="font-size: 1.1rem;">Liste des vendeurs enregistrés</h3>
+                        <h3 class="table-title">Liste des vendeurs enregistrés</h3>
                         <button class="btn-add" onclick="openModal('modal-vendeur')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
                     <div style="overflow-x: auto;">
@@ -415,10 +510,10 @@
 
             <!-- ITEMS -->
             <section id="view-items" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Catalogue Items</h2>
+                <h2 class="header-title">Catalogue Items</h2>
                 <div class="table-container">
                     <div class="table-header">
-                        <h3 style="font-size: 1.1rem;">Items disponibles à la vente</h3>
+                        <h3 class="table-title">Items disponibles à la vente</h3>
                         <button class="btn-add" onclick="openModal('modal-item')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
                     <div style="overflow-x: auto;">
@@ -432,10 +527,10 @@
 
             <!-- PAIEMENTS -->
             <section id="view-paiements" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Moyens de Paiement</h2>
+                <h2 class="header-title">Moyens de Paiement</h2>
                 <div class="table-container">
                     <div class="table-header">
-                        <h3 style="font-size: 1.1rem;">Méthodes acceptées</h3>
+                        <h3 class="table-title">Méthodes acceptées</h3>
                         <button class="btn-add" onclick="openModal('modal-paiement')"><i class="fa-solid fa-plus"></i> Ajouter</button>
                     </div>
                     <div style="overflow-x: auto;">
@@ -447,12 +542,12 @@
                 </div>
             </section>
 
-            <!-- LOGS SECTION -->
+            <!-- LOGS SECTION (NOUVEAU) -->
             <section id="view-logs" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Journal d'Activité</h2>
-                <div class="table-container">
+                <h2 class="header-title">Journal d'Activité</h2>
+                <div class="logs-container">
                     <div class="table-header">
-                        <h3 style="font-size: 1.1rem;">Historique complet des actions</h3>
+                        <h3 class="table-title">Historique complet des actions</h3>
                         <button class="btn-add" onclick="exportLogs()" style="background:var(--text-muted);"><i class="fa-solid fa-download"></i> Exporter</button>
                     </div>
                     <div style="overflow-x: auto;">
@@ -466,7 +561,7 @@
 
             <!-- CONFIG -->
             <section id="view-config" class="hidden">
-                <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color:white;">Configuration Globale</h2>
+                <h2 class="header-title">Configuration Globale</h2>
                 <div class="stat-card" style="max-width:600px;">
                     <div class="form-group">
                         <label class="form-label">Couleur des Embeds</label>
@@ -488,27 +583,114 @@
     </div>
 
     <!-- --- MODALS --- -->
+
+    <!-- Modal Vendeur (CRÉER) -->
     <div id="modal-vendeur" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-vendeur')">&times;</button><h2>Ajouter Vendeur</h2><form onsubmit="submitVendeur(event)"><div class="form-group"><label class="form-label">Discord ID</label><input type="text" id="vnd-id" class="form-input" required></div><div class="form-group"><label class="form-label">Nom d'affichage</label><input type="text" id="vnd-name" class="form-input" required></div><button type="submit" class="btn-submit">Créer</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-vendeur')">&times;</button>
+            <h2>Ajouter Vendeur</h2>
+            <form onsubmit="submitVendeur(event)">
+                <div class="form-group">
+                    <label class="form-label">Discord ID</label>
+                    <input type="text" id="vnd-id" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom d'affichage</label>
+                    <input type="text" id="vnd-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Créer</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Modal Vendeur (MODIFIER) -->
     <div id="modal-vendeur-edit" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-vendeur-edit')">&times;</button><h2>Modifier Vendeur</h2><form onsubmit="submitEditVendeur(event)"><input type="hidden" id="edit-vnd-id"><div class="form-group"><label class="form-label">Discord ID</label><input type="text" id="edit-vnd-id-display" class="form-input" required></div><div class="form-group"><label class="form-label">Nom d'affichage</label><input type="text" id="edit-vnd-name" class="form-input" required></div><button type="submit" class="btn-submit">Enregistrer</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-vendeur-edit')">&times;</button>
+            <h2>Modifier Vendeur</h2>
+            <form onsubmit="submitEditVendeur(event)">
+                <input type="hidden" id="edit-vnd-id">
+                <div class="form-group">
+                    <label class="form-label">Discord ID</label>
+                    <input type="text" id="edit-vnd-id-display" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom d'affichage</label>
+                    <input type="text" id="edit-vnd-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Modal Item (CRÉER) -->
     <div id="modal-item" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-item')">&times;</button><h2>Nouvel Item</h2><form onsubmit="submitItem(event)"><div class="form-group"><label class="form-label">Nom de l'item</label><input type="text" id="itm-name" class="form-input" required></div><button type="submit" class="btn-submit">Ajouter</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-item')">&times;</button>
+            <h2>Nouvel Item</h2>
+            <form onsubmit="submitItem(event)">
+                <div class="form-group">
+                    <label class="form-label">Nom de l'item</label>
+                    <input type="text" id="itm-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Ajouter</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Modal Item (MODIFIER) -->
     <div id="modal-item-edit" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-item-edit')">&times;</button><h2>Modifier Item</h2><form onsubmit="submitEditItem(event)"><input type="hidden" id="edit-itm-id"><div class="form-group"><label class="form-label">Nom de l'item</label><input type="text" id="edit-itm-name" class="form-input" required></div><button type="submit" class="btn-submit">Enregistrer</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-item-edit')">&times;</button>
+            <h2>Modifier Item</h2>
+            <form onsubmit="submitEditItem(event)">
+                <input type="hidden" id="edit-itm-id">
+                <div class="form-group">
+                    <label class="form-label">Nom de l'item</label>
+                    <input type="text" id="edit-itm-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Modal Paiement (CRÉER) -->
     <div id="modal-paiement" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-paiement')">&times;</button><h2>Nouveau Paiement</h2><form onsubmit="submitPaiement(event)"><div class="form-group"><label class="form-label">Nom (Ex: PayPal)</label><input type="text" id="pay-name" class="form-input" required></div><button type="submit" class="btn-submit">Ajouter</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-paiement')">&times;</button>
+            <h2>Nouveau Paiement</h2>
+            <form onsubmit="submitPaiement(event)">
+                <div class="form-group">
+                    <label class="form-label">Nom (Ex: PayPal)</label>
+                    <input type="text" id="pay-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Ajouter</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Modal Paiement (MODIFIER) -->
     <div id="modal-paiement-edit" class="modal-overlay">
-        <div class="modal"><button class="close-modal" onclick="closeModal('modal-paiement-edit')">&times;</button><h2>Modifier Paiement</h2><form onsubmit="submitEditPaiement(event)"><input type="hidden" id="edit-pay-id"><div class="form-group"><label class="form-label">Nom</label><input type="text" id="edit-pay-name" class="form-input" required></div><button type="submit" class="btn-submit">Enregistrer</button></form></div>
+        <div class="modal">
+            <button class="close-modal" onclick="closeModal('modal-paiement-edit')">&times;</button>
+            <h2>Modifier Paiement</h2>
+            <form onsubmit="submitEditPaiement(event)">
+                <input type="hidden" id="edit-pay-id">
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input type="text" id="edit-pay-name" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </form>
+        </div>
     </div>
+
+    <!-- --- MODAL DE CONFIRMATION CUSTOM --- -->
     <div id="modal-confirm" class="modal-overlay">
         <div class="modal" style="max-width: 350px; text-align: center;">
-            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
             <h2 id="confirm-title" style="margin-bottom: 0.5rem;">Confirmer ?</h2>
             <p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 2rem;">Voulez-vous vraiment effectuer cette action ?</p>
             <div style="display: flex; gap: 10px;">
@@ -517,9 +699,13 @@
             </div>
         </div>
     </div>
+
+    <!-- --- MODAL DE LOGOUT (PC/MOBILE) --- -->
     <div id="modal-logout" class="modal-overlay">
         <div class="modal" style="max-width: 350px; text-align: center;">
-            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"><i class="fa-solid fa-power-off"></i></div>
+            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
             <h2 style="margin-bottom: 0.5rem;">Déconnexion</h2>
             <p style="color: var(--text-muted); margin-bottom: 2rem;">Êtes-vous sûr de vouloir quitter le panneau ?</p>
             <div style="display: flex; gap: 10px;">
@@ -529,22 +715,28 @@
         </div>
     </div>
 
+    <!-- TOAST -->
     <div id="toast" class="toast">Action réussie</div>
 
     <script>
+        // --- CONFIG ---
         const DISCORD_CLIENT_ID = "1456097389453643894"; 
         const API_URL = window.location.origin + "/api";
 
+        // --- ETAT GLOBAL ---
         let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {}, user: {} };
         let pendingAction = null; 
-        let charts = { revenue: null, sellers: null, items: null }; 
-        let activityLogs = [];
-        let displayLimit = 10;
+        let charts = { revenue: null, sellers: null, items: null }; // Stockage Chart.js
+        let activityLogs = []; // SYSTEME DE LOGS LOCAL
 
+        // --- UI UTILS ---
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
+        function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('show'); }
         function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // --- LOGOUT SYSTEM ---
         function openLogoutModal() { document.getElementById('modal-logout').classList.add('active'); }
         function performLogout() { localStorage.removeItem('discord_token'); window.location.href = window.location.pathname; }
 
@@ -556,7 +748,7 @@
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const token = fragment.get('access_token') || localStorage.getItem('discord_token');
 
-            if (!token) return renderPublicLanding();
+            if (!token) return showLogin();
 
             try {
                 const res = await fetch(`${API_URL}/auth/verify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token }) });
@@ -564,288 +756,559 @@
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
+                    // Nettoyer l'URL
                     history.pushState("", document.title, window.location.pathname);
                     
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
-                    db.user = { tag: data.username, isAdmin: data.isAdmin || data.role === 'admin' };
-
-                    if (db.user.isAdmin) {
-                        // REDIRECTION ADMIN
-                        document.getElementById('landing-app').classList.add('hidden');
-                        document.getElementById('dashboard-app').classList.remove('hidden');
-                        document.getElementById('dashboard-app').style.display = 'flex';
-                        initDashboard();
-                    } else {
-                        // REDIRECTION MEMBRE LAMBDA
-                        document.getElementById('dashboard-app').classList.add('hidden');
-                        document.getElementById('landing-app').classList.remove('hidden');
-                        renderConnectedLanding(data);
-                    }
+                    document.getElementById('user-avatar-mobile').src = data.avatar;
+                    db.user = { tag: data.username }; // Pour les logs
                     
-                    loadAllData(); // Charger les vouches pour tout le monde
+                    showDashboard();
+                    loadAllData();
                 } else {
                     localStorage.removeItem('discord_token');
-                    renderPublicLanding();
+                    document.getElementById('login-error').style.display = 'block';
+                    document.getElementById('login-error').textContent = data.error || "Accès refusé";
                 }
-            } catch (e) { console.error(e); renderPublicLanding(); }
+            } catch (e) { console.error(e); }
         }
 
-        // --- FONCTIONS PUBLIQUES (LANDING) ---
-        function renderPublicLanding() {
-            document.getElementById('landing-app').classList.remove('hidden');
-            document.getElementById('dashboard-app').classList.add('hidden');
-            document.getElementById('login-btn-area').classList.remove('hidden');
-            document.getElementById('logged-in-area').classList.add('hidden');
+        function showLogin() { document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-app').classList.add('hidden'); }
+        function showDashboard() { document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
+
+        // --- SYSTEME DE LOGS (NOUVEAU) ---
+        function logAction(type, entityName, details) {
+            const now = new Date();
+            const logEntry = {
+                date: now,
+                timestamp: now.getTime(),
+                type: type, // CRÉATION, MODIFICATION, SUPPRESSION
+                entity: entityName, // Vendeur, Item, etc.
+                details: details,
+                author: db.user.tag || "Utilisateur"
+            };
+            // Ajouter au début du tableau
+            activityLogs.unshift(logEntry);
+            renderLogs();
         }
 
-        function renderConnectedLanding(userData) {
-            document.getElementById('landing-app').classList.remove('hidden');
-            document.getElementById('dashboard-app').classList.add('hidden');
-            document.getElementById('login-btn-area').classList.add('hidden');
-            const profileArea = document.getElementById('logged-in-area');
-            profileArea.classList.remove('hidden');
-            document.getElementById('user-avatar-header').src = userData.avatar;
-            document.getElementById('user-tag-header').textContent = userData.username;
-        }
+        function renderLogs() {
+            const tbody = document.getElementById('logs-table-body');
+            if(activityLogs.length ===0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucune activité enregistrée.</td></tr>`;
+                return;
+            }
 
-        function loadVouches() {
-            fetch(`${API_URL}/vouches`)
-                .then(res => res.json())
-                .then(vouches => {
-                    db.vouches = vouches;
-                    renderVouchCards(); // Pour la Landing
-                    renderHome(); // Pour l'Admin Dashboard
-                    renderVouches(); // Pour l'Admin Liste
-                });
-        }
+            // Formatage de la date
+            tbody.innerHTML = activityLogs.map(log => {
+                let badgeClass = "badge-log";
+                let typeText = "";
+                
+                if(log.type === 'CRÉATION') { badgeClass += " creation"; typeText = "Ajout"; }
+                else if(log.type === 'MODIFICATION') { badgeClass += " modification"; typeText = "Modif"; }
+                else if(log.type === 'SUPPRESSION') { badgeClass += " deletion"; typeText = "Supp"; }
 
-        function renderVouchCards() {
-            const grid = document.getElementById('vouch-grid');
-            const btnMore = document.getElementById('btn-load-more');
-            if(db.vouches.length ===0) { grid.innerHTML = `<div style="text-align:center; color:var(--text-muted); grid-column:1/-1;">Aucun vouch disponible.</div>`; btnMore.classList.add('hidden'); return; }
-
-            const sorted = [...db.vouches].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-            const toDisplay = sorted.slice(0, displayLimit);
-            if (displayLimit >= sorted.length) btnMore.classList.add('hidden'); else btnMore.classList.remove('hidden');
-
-            grid.innerHTML = toDisplay.map(v => {
-                const date = new Date(v.createdAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' });
-                let stars = '';
-                for(let i=1; i<=5; i++) stars += i <= v.note ? '<i class="fa-solid fa-star" style="color:#fee75c; font-size:0.8rem;"></i>' : '<i class="fa-solid fa-star" style="color:#99aab5; font-size:0.8rem;"></i>';
+                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
 
                 return `
-                    <div class="vouch-card">
-                        <div class="embed-header">
-                            <img src="${v.authorAvatar}" class="embed-avatar" alt="Auteur">
-                            <div class="embed-title">
-                                <div class="embed-title-name">
-                                    <span style="font-weight:800; font-size:1.1rem; color:white;">Vouch par ${v.authorTag}</span>
-                                    <span>${v.vendeurName}</span>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-ellipsis embed-icon"></i>
-                        </div>
-                        <div class="embed-body">
-                            <div class="embed-description">"${v.comment || "Pas de commentaire."}"</div>
-                            <div class="embed-fields">
-                                <div><div class="embed-field-name">Item</div><div class="embed-field-value">${v.item}</div></div>
-                                <div><div class="embed-field-name">Prix</div><div class="embed-field-value bold">${v.prix}</div></div>
-                            </div>
-                            <div class="embed-fields" style="margin-top:0.2rem;">
-                                <div><div class="embed-field-name">Note</div><div class="embed-field-value">${stars} (${v.note}/5)</div></div>
-                                <div><div class="embed-field-name">Quantité</div><div class="embed-field-value">${v.quantity || 1}</div></div>
-                            </div>
-                        </div>
-                        <div class="embed-footer">
-                            <div class="embed-author"><img src="${v.authorAvatar}" class="embed-author-img" alt=""><span>${v.authorTag}</span></div>
-                            <div class="embed-timestamp">Le ${date}</div>
-                        </div>
-                    </div>
+                    <tr>
+                        <td style="color:var(--text-muted); font-size:0.85rem;">${dateStr}</td>
+                        <td><span class="${badgeClass}">${typeText}</span></td>
+                        <td style="font-weight:600;">${log.entity}</td>
+                        <td style="color:var(--text-muted);">${log.details}</td>
+                        <td style="color:var(--text-muted); font-size:0.9rem;">${log.author}</td>
+                    </tr>
                 `;
             }).join('');
         }
 
-        function loadMoreVouches() {
-            displayLimit += 10;
-            renderVouchCards();
-        }
-
-        // --- FONCTIONS ADMIN ---
-        function initDashboard() {
-            document.getElementById('mobile-header').classList.remove('hidden');
-            document.getElementById('mobile-header').classList.add('block');
-            document.getElementById('user-avatar-mobile').src = db.user.avatar;
-        }
-
-        function renderHome() {
-            document.getElementById('stat-total').textContent = db.vouches.length;
-            document.getElementById('stat-vendors').textContent = db.vendeurs.length;
-            const avg = db.vouches.length ? (db.vouches.reduce((a,b)=>a+b.note,0)/db.vouches.length).toFixed(1) : "0.0";
-            document.getElementById('stat-rating').textContent = avg;
-            const tbody = document.getElementById('dashboard-table-body');
-            tbody.innerHTML = db.vouches.slice(0,5).map(v => `<tr><td>${v.authorTag}</td><td>${v.vendeurName}</td><td><span class="badge badge-star">${v.note}/5</span></td><td style="color:var(--text-muted)">${v.item}</td><td>${v.quantity ? v.quantity : 'N/A'}</td></tr>`).join('');
-        }
-
-        function renderVouches() {
-            const search = document.getElementById('search-input')?.value.toLowerCase() || "";
-            const filtered = db.vouches.filter(v => v.vendeurName.toLowerCase().includes(search) || v.authorTag.toLowerCase().includes(search));
-            document.getElementById('vouch-table-body').innerHTML = filtered.map(v => `<tr><td>#${v.vouchId}</td><td>${v.authorTag}</td><td>${v.vendeurName}</td><td><span class="badge badge-star">${v.note}</span></td><td>${v.quantity ? v.quantity : 'N/A'}</td><td><button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-        }
-
-        function renderVendeurs() {
-            document.getElementById('vendeur-table-body').innerHTML = db.vendeurs.map(v => `<tr><td style="font-family:monospace; color:var(--primary)">${v.discordId}</td><td>${v.name}</td><td><button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button><button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button></td></tr>`).join('');
-        }
-        function renderItems() {
-            document.getElementById('item-table-body').innerHTML = db.items.map(i => `<tr><td>${i.name}</td><td><button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button><button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button></td></tr>`).join('');
-        }
-        function renderPaiements() {
-            document.getElementById('paiement-table-body').innerHTML = db.paiements.map(p => `<tr><td>${p.name}</td><td><button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button><button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button></td></tr>`).join('');
-        }
-
-        // --- LOGS & DATA FETCHING ---
-        function logAction(type, entityName, details) {
-            const now = new Date();
-            const logEntry = { date: now, timestamp: now.getTime(), type: type, entity: entityName, details: details, author: db.user.tag || "Utilisateur" };
-            activityLogs.unshift(logEntry);
-            renderLogs();
-        }
-        function renderLogs() {
-            const tbody = document.getElementById('logs-table-body');
-            if(activityLogs.length ===0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucune activité enregistrée.</td></tr>`; return; }
-            tbody.innerHTML = activityLogs.map(log => {
-                let badgeClass = "badge-log"; let typeText = "";
-                if(log.type === 'CRÉATION') { badgeClass += " creation"; typeText = "Ajout"; }
-                else if(log.type === 'MODIFICATION') { badgeClass += " modification"; typeText = "Modif"; }
-                else if(log.type === 'SUPPRESSION') { badgeClass += " deletion"; typeText = "Supp"; }
-                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
-                return `<tr><td style="color:var(--text-muted); font-size:0.85rem;">${dateStr}</td><td><span class="${badgeClass}">${typeText}</span></td><td style="font-weight:600;">${log.entity}</td><td style="color:var(--text-muted);">${log.details}</td><td style="color:var(--text-muted); font-size:0.9rem;">${log.author}</td></tr>`;
-            }).join('');
-        }
         function exportLogs() {
             let csvContent = "data:text/csv;charset=utf-8,Type,Entité,Détails,Auteur,Date\n";
-            activityLogs.forEach(log => { const dateStr = new Date(log.timestamp).toLocaleString('fr-FR'); csvContent += `${log.type},${log.entity},${log.details},${log.author},${dateStr}\n`; });
+            activityLogs.forEach(log => {
+                const dateStr = new Date(log.timestamp).toLocaleString('fr-FR');
+                csvContent += `${log.type},${log.entity},${log.details},${log.author},${dateStr}\n`;
+            });
             const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "activite_site_logs.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "activite_site_logs.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
+        // --- DATA FETCHING ---
         async function loadAllData() {
             try {
-                const [vRes, vndRes, iRes, pRes, cRes] = await Promise.all([fetch(`${API_URL}/vouches`), fetch(`${API_URL}/vendeurs`), fetch(`${API_URL}/items`), fetch(`${API_URL}/paiements`), fetch(`${API_URL}/config`)]);
-                db.vouches = await vRes.json(); db.vendeurs = await vndRes.json(); db.items = await iRes.json(); db.paiements = await pRes.json(); db.config = await cRes.json();
+                const [vRes, vndRes, iRes, pRes, cRes] = await Promise.all([
+                    fetch(`${API_URL}/vouches`),
+                    fetch(`${API_URL}/vendeurs`),
+                    fetch(`${API_URL}/items`),
+                    fetch(`${API_URL}/paiements`),
+                    fetch(`${API_URL}/config`)
+                ]);
+
+                db.vouches = await vRes.json();
+                db.vendeurs = await vndRes.json();
+                db.items = await iRes.json();
+                db.paiements = await pRes.json();
+                db.config = await cRes.json();
+
                 if(db.config) {
                     if(db.config.embedColor) document.getElementById('config-color-input').value = db.config.embedColor;
                     if(db.config.logChannelId) document.getElementById('config-log-input').value = db.config.logChannelId;
                     if(db.config.leaderboardChannelId) document.getElementById('config-leaderboard-input').value = db.config.leaderboardChannelId;
                 }
+
                 renderAll();
             } catch (e) { console.log("Erreur chargement données"); }
         }
 
         function renderAll() { renderHome(); renderVouches(); renderVendeurs(); renderItems(); renderPaiements(); }
 
-        // --- COMPTABILITÉ (ADMIN) ---
+        // --- RENDER FUNCTIONS ---
+        function renderHome() {
+            document.getElementById('stat-total').textContent = db.vouches.length;
+            document.getElementById('stat-vendors').textContent = db.vendeurs.length;
+            const avg = db.vouches.length ? (db.vouches.reduce((a,b)=>a+b.note,0)/db.vouches.length).toFixed(1) : "0.0";
+            document.getElementById('stat-rating').textContent = avg;
+
+            const tbody = document.getElementById('dashboard-table-body');
+            tbody.innerHTML = db.vouches.slice(0,5).map(v => `
+                <tr>
+                    <td>${v.authorTag}</td>
+                    <td>${v.vendeurName}</td>
+                    <td><span class="badge badge-star">${v.note}/5</span></td>
+                    <td style="color:var(--text-muted)">${v.item}</td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderVouches() {
+            const search = document.getElementById('search-input')?.value.toLowerCase() || "";
+            const filtered = db.vouches.filter(v => v.vendeurName.toLowerCase().includes(search) || v.authorTag.toLowerCase().includes(search));
+            document.getElementById('vouch-table-body').innerHTML = filtered.map(v => `
+                <tr>
+                    <td>#${v.vouchId}</td>
+                    <td>${v.authorTag}</td>
+                    <td>${v.vendeurName}</td>
+                    <td><span class="badge badge-star">${v.note}</span></td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
+                    <td>
+                        <button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderVendeurs() {
+            document.getElementById('vendeur-table-body').innerHTML = db.vendeurs.map(v => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--primary)">${v.discordId}</td>
+                    <td>${v.name}</td>
+                    <td>
+                        <button class="btn-icon btn-del" onclick="deleteVendeur('${v._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditVendeur('${v._id}', '${v.discordId}', '${v.name}')"><i class="fa-solid fa-pencil"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderItems() {
+            document.getElementById('item-table-body').innerHTML = db.items.map(i => `
+                <tr>
+                    <td>${i.name}</td>
+                    <td>
+                        <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPaiements() {
+            document.getElementById('paiement-table-body').innerHTML = db.paiements.map(p => `
+                <tr>
+                    <td>${p.name}</td>
+                    <td>
+                        <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // --- COMPTABILITÉ (LE NOUVEAU TRUC) ---
+
+        // Helper: Extraire prix en float
         function parsePrice(priceStr) { return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0; }
+
+        // Logique des présélections de dates
         function getPresetDates(preset) {
-            const end = new Date(); const start = new Date(); end.setHours(23, 59, 59, 999);
+            const end = new Date();
+            const start = new Date();
+            
+            end.setHours(23, 59, 59, 999);
+
             switch(preset) {
-                case 'today': start.setHours(0, 0, 0, 0); break; case '7d': start.setDate(start.getDate() - 7); break; case '30d': start.setDate(start.getDate() - 30); break;
-                case '90d': start.setDate(start.getDate() - 90); break; case '180d': start.setDate(start.getDate() - 180); break;
-                case '365d': start.setFullYear(start.getFullYear() - 1); break; case 'all': if(db.vouches.length > 0) { start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt)); } else { start.setTime(new Date()); } break; default: return null;
+                case 'today':
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '7d':
+                    start.setDate(start.getDate() - 7);
+                    break;
+                case '30d':
+                    start.setDate(start.getDate() - 30);
+                    break;
+                case '90d':
+                    start.setDate(start.getDate() - 90);
+                    break;
+                case '180d':
+                    start.setDate(start.getDate() - 180);
+                    break;
+                case '365d':
+                    start.setFullYear(start.getFullYear() - 1);
+                    break;
+                case 'all':
+                    // Premier vouch de la DB
+                    if(db.vouches.length > 0) {
+                        start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt));
+                    } else {
+                        start.setTime(new Date()); // Si vide, auj
+                    }
+                    break;
+                default:
+                    return null;
             }
             return { start, end };
         }
-        async function generateReport(preset) {
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById(`btn-preset-${preset}`); if(btn) btn.classList.add('active');
-            const dates = getPresetDates(preset); if (!dates) return;
-            const { start, end } = dates;
-            const filteredVouches = db.vouches.filter(v => { const vDate = new Date(v.createdAt); return vDate >= start && vDate <= end; });
-            if (filteredVouches.length === 0) { resetAccountingStats(); return; }
 
-            let totalRevenue = 0; let totalVolume = 0; let totalQuantity = 0; const sellerRevenue = {}; const itemSales = {};
-            filteredVouches.forEach(v => {
-                const price = parsePrice(v.prix); const qty = v.quantity || 1; const revenue = price * qty;
-                totalRevenue += revenue; totalVolume += 1; totalQuantity += qty;
-                if (!sellerRevenue[v.vendeurId]) sellerRevenue[v.vendeurId] = 0; sellerRevenue[v.vendeurId] += revenue;
-                if (!itemSales[v.item]) itemSales[v.item] = 0; itemSales[v.item] += qty;
+        // Fonction principale de génération
+        async function generateReport(preset) {
+            // Bouton visuel
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById(`btn-preset-${preset}`);
+            if(btn) btn.classList.add('active');
+
+            const dates = getPresetDates(preset);
+            if (!dates) return;
+
+            const { start, end } = dates;
+
+            // Filtrer les vouches
+            const filteredVouches = db.vouches.filter(v => {
+                const vDate = new Date(v.createdAt);
+                return vDate >= start && vDate <= end;
             });
 
-            const money = totalRevenue > 0 ? totalRevenue.toFixed(2) + " €" : "0.00 €";
-            document.getElementById('acc-revenue').textContent = money; document.getElementById('acc-volume').textContent = totalVolume; document.getElementById('acc-qty').textContent = totalQuantity;
+            if (filteredVouches.length === 0) {
+                resetAccountingStats(); // Affiche 0 ou N/A si rien
+                return; 
+            }
 
-            let topSellerName = totalVolume > 0 ? "-" : "N/A"; let topSellerRev = "0.00 €";
+            // --- CALCULS ---
+            let totalRevenue = 0;
+            let totalVolume = 0;
+            let totalQuantity = 0;
+            const sellerRevenue = {};
+            const itemSales = {};
+
+            filteredVouches.forEach(v => {
+                const price = parsePrice(v.prix);
+                const qty = v.quantity || 1; // Si pas de quantité, on considère 1 (vente d'un service)
+                const revenue = price * qty;
+
+                totalRevenue += revenue;
+                totalVolume += 1;
+                totalQuantity += qty;
+
+                // Par vendeur
+                if (!sellerRevenue[v.vendeurId]) sellerRevenue[v.vendeurId] = 0;
+                sellerRevenue[v.vendeurId] += revenue;
+
+                // Par item
+                if (!itemSales[v.item]) itemSales[v.item] = 0;
+                itemSales[v.item] += qty;
+            });
+
+            // --- MISE À JOUR UI ---
+            // Si y'a pas de vente, afficher N/A ou 0.00€
+            const money = totalRevenue > 0 ? totalRevenue.toFixed(2) + " €" : "0.00 €";
+            document.getElementById('acc-revenue').textContent = money;
+            
+            document.getElementById('acc-volume').textContent = totalVolume;
+            document.getElementById('acc-qty').textContent = totalQuantity;
+
+            // Top Vendeur
+            let topSellerName = totalVolume > 0 ? "-" : "N/A";
+            let topSellerRev = "0.00 €";
             const sortedSellers = Object.entries(sellerRevenue).sort((a, b) => b[1] - a[1]);
             if (sortedSellers.length > 0) {
-                const topId = sortedSellers[0][0]; topSellerRev = sortedSellers[0][1].toFixed(2) + " €";
-                const sellerObj = db.vendeurs.find(v => v.discordId === topId); topSellerName = sellerObj ? sellerObj.name : "ID Inconnu";
+                const topId = sortedSellers[0][0];
+                topSellerRev = sortedSellers[0][1].toFixed(2) + " €";
+                const sellerObj = db.vendeurs.find(v => v.discordId === topId);
+                topSellerName = sellerObj ? sellerObj.name : "ID Inconnu";
             }
-            document.getElementById('acc-top-seller').textContent = topSellerName; document.getElementById('acc-top-seller-val').textContent = topSellerRev;
+            document.getElementById('acc-top-seller').textContent = topSellerName;
+            document.getElementById('acc-top-seller-val').textContent = topSellerRev;
 
+            // --- CHARTS (Chart.js) ---
             renderCharts(filteredVouches, sellerRevenue, itemSales);
         }
 
         function resetAccountingStats() {
-            document.getElementById('acc-revenue').textContent = "0.00 €"; document.getElementById('acc-volume').textContent = "0"; document.getElementById('acc-qty').textContent = "0"; document.getElementById('acc-top-seller').textContent = "-"; document.getElementById('acc-top-seller-val').textContent = "0.00 €";
-            if(charts.revenue) charts.revenue.destroy(); if(charts.sellers) charts.sellers.destroy(); if(charts.items) charts.items.destroy();
+            document.getElementById('acc-revenue').textContent = "0.00 €";
+            document.getElementById('acc-volume').textContent = "0";
+            document.getElementById('acc-qty').textContent = "0";
+            document.getElementById('acc-top-seller').textContent = "-";
+            document.getElementById('acc-top-seller-val').textContent = "0.00 €";
+            
+            if(charts.revenue) charts.revenue.destroy();
+            if(charts.sellers) charts.sellers.destroy();
+            if(charts.items) charts.items.destroy();
         }
 
         function renderCharts(vouches, sellers, items) {
-            const dailyRevenue = {}; vouches.forEach(v => {
+            // 1. Graphique Revenu Mensuel (Ligne)
+            // On groupe par jour pour le graphe
+            const dailyRevenue = {};
+            vouches.forEach(v => {
                 const day = new Date(v.createdAt).toLocaleDateString('fr-FR');
                 const price = parsePrice(v.prix) * (v.quantity || 1);
-                if (!dailyRevenue[day]) dailyRevenue[day] = 0; dailyRevenue[day] += price;
+                if (!dailyRevenue[day]) dailyRevenue[day] = 0;
+                dailyRevenue[day] += price;
             });
+
             const ctxRev = document.getElementById('chart-revenue').getContext('2d');
             if (charts.revenue) charts.revenue.destroy();
-            charts.revenue = new Chart(ctxRev, { type: 'line', data: { labels: Object.keys(dailyRevenue), datasets: [{ label: 'Revenu (€)', data: Object.values(dailyRevenue), borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.2)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
+            charts.revenue = new Chart(ctxRev, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(dailyRevenue),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: Object.values(dailyRevenue),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
 
+            // 2. Graphique Top Vendeurs (Barres)
             const ctxSellers = document.getElementById('chart-sellers').getContext('2d');
             if (charts.sellers) charts.sellers.destroy();
-            const sortedSellersData = Object.entries(sellers).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => { const vnd = db.vendeurs.find(v => v.discordId === entry[0]); return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] }; });
-            charts.sellers = new Chart(ctxSellers, { type: 'bar', data: { labels: sortedSellersData.map(d => d.name), datasets: [{ label: 'Revenu (€)', data: sortedSellersData.map(d => d.value), backgroundColor: ['rgba(99, 102, 241, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(99, 102, 241, 0.8)'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+            
+            // Preparer data (Nom + Revenu)
+            const sortedSellersData = Object.entries(sellers)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5) // Top 5
+                .map(entry => {
+                    const vnd = db.vendeurs.find(v => v.discordId === entry[0]);
+                    return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] };
+                });
 
+            charts.sellers = new Chart(ctxSellers, {
+                type: 'bar',
+                data: {
+                    labels: sortedSellersData.map(d => d.name),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: sortedSellersData.map(d => d.value),
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(99, 102, 241, 0.8)'
+                        ]
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // 3. Graphique Top Items (Barres)
             const ctxItems = document.getElementById('chart-items').getContext('2d');
             if (charts.items) charts.items.destroy();
-            const sortedItemsData = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => ({ name: entry[0], value: entry[1] }));
-            charts.items = new Chart(ctxItems, { type: 'bar', data: { labels: sortedItemsData.map(d => d.name), datasets: [{ label: 'Qté Vendue', data: sortedItemsData.map(d => d.value), backgroundColor: '#10b981' }] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' } });
+
+            const sortedItemsData = Object.entries(items)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(entry => ({ name: entry[0], value: entry[1] }));
+
+            charts.items = new Chart(ctxItems, {
+                type: 'bar',
+                data: {
+                    labels: sortedItemsData.map(d => d.name),
+                    datasets: [{
+                        label: 'Qté Vendue',
+                        data: sortedItemsData.map(d => d.value),
+                        backgroundColor: '#10b981'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+            });
         }
 
         // --- ACTIONS API ---
-        async function submitVendeur(e) { e.preventDefault(); const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value }; await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('CRÉATION', 'Vendeur', data.name); closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté"); }
-        async function submitEditVendeur(e) { e.preventDefault(); const id = document.getElementById('edit-vnd-id').value; const data = { discordId: document.getElementById('edit-vnd-id-display').value, name: document.getElementById('edit-vnd-name').value }; await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('MODIFICATION', 'Vendeur', data.name); closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié"); }
-        async function deleteVendeur(id) { const vnd = db.vendeurs.find(v => v._id === id); if(confirm(`Supprimer le vendeur ${vnd.name} ?`)) { showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => { await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' }); logAction('SUPPRESSION', 'Vendeur', vnd.name); loadAllData(); showToast("Vendeur supprimé"); }); } }
-        async function submitItem(e) { e.preventDefault(); const data = { name: document.getElementById('itm-name').value }; await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('CRÉATION', 'Item', data.name); closeModal('modal-item'); loadAllData(); showToast("Item ajouté"); }
-        async function submitEditItem(e) { e.preventDefault(); const id = document.getElementById('edit-itm-id').value; const data = { name: document.getElementById('edit-itm-name').value }; await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('MODIFICATION', 'Item', data.name); closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié"); }
-        async function deleteItem(id) { const itm = db.items.find(i => i._id === id); if(confirm(`Supprimer l'item ${itm.name} ?`)) { showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => { await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' }); logAction('SUPPRESSION', 'Item', itm.name); loadAllData(); showToast("Item supprimé"); }); } }
-        async function submitPaiement(e) { e.preventDefault(); const data = { name: document.getElementById('pay-name').value }; await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('CRÉATION', 'Paiement', data.name); closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté"); }
-        async function submitEditPaiement(e) { e.preventDefault(); const id = document.getElementById('edit-pay-id').value; const data = { name: document.getElementById('edit-pay-name').value }; await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); logAction('MODIFICATION', 'Paiement', data.name); closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié"); }
-        async function deletePaiement(id) { const pay = db.paiements.find(p => p._id === id); if(confirm(`Supprimer le paiement ${pay.name} ?`)) { showConfirm("Supprimer Paiement", "", async () => { await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' }); logAction('SUPPRESSION', 'Paiement', pay.name); loadAllData(); showToast("Paiement supprimé"); }); } }
+        async function submitVendeur(e) {
+            e.preventDefault();
+            const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value };
+            await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Vendeur', data.name); // LOG ICI
+            closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté");
+        }
+        async function submitEditVendeur(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-vnd-id').value;
+            const data = {
+                discordId: document.getElementById('edit-vnd-id-display').value,
+                name: document.getElementById('edit-vnd-name').value
+            };
+            await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Vendeur', data.name); // LOG ICI
+            closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
+        }
+        async function deleteVendeur(id) {
+            const vnd = db.vendeurs.find(v => v._id === id);
+            if(confirm(`Supprimer le vendeur ${vnd.name} ?`)) {
+                showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
+                    await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Vendeur', vnd.name); // LOG ICI
+                    loadAllData(); showToast("Vendeur supprimé");
+                });
+            }
+        }
+
+        async function submitItem(e) {
+            e.preventDefault();
+            const data = { name: document.getElementById('itm-name').value };
+            await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Item', data.name); // LOG ICI
+            closeModal('modal-item'); loadAllData(); showToast("Item ajouté");
+        }
+        async function submitEditItem(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-itm-id').value;
+            const data = { name: document.getElementById('edit-itm-name').value };
+            await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Item', data.name); // LOG ICI
+            closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
+        }
+        async function deleteItem(id) {
+            const itm = db.items.find(i => i._id === id);
+            if(confirm(`Supprimer l'item ${itm.name} ?`)) {
+                showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
+                    await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Item', itm.name); // LOG ICI
+                    loadAllData(); showToast("Item supprimé");
+                });
+            }
+        }
+
+        async function submitPaiement(e) {
+            e.preventDefault();
+            const data = { name: document.getElementById('pay-name').value };
+            await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('CRÉATION', 'Paiement', data.name); // LOG ICI
+            closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté");
+        }
+        async function submitEditPaiement(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-pay-id').value;
+            const data = { name: document.getElementById('edit-pay-name').value };
+            await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            logAction('MODIFICATION', 'Paiement', data.name); // LOG ICI
+            closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
+        }
+        async function deletePaiement(id) {
+            const pay = db.paiements.find(p => p._id === id);
+            if(confirm(`Supprimer le paiement ${pay.name} ?`)) {
+                showConfirm("Supprimer Paiement", "", async () => {
+                    await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
+                    logAction('SUPPRESSION', 'Paiement', pay.name); // LOG ICI
+                    loadAllData(); showToast("Paiement supprimé");
+                });
+            }
+        }
 
         async function saveConfig() {
-            const color = document.getElementById('config-color-input').value; const logId = document.getElementById('config-log-input').value; const lbId = document.getElementById('config-leaderboard-input').value ? document.getElementById('config-leaderboard-input').value : "";
-            await fetch(`${API_URL}/config`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) }); showToast("Configuration sauvegardée");
+            const color = document.getElementById('config-color-input').value;
+            const logId = document.getElementById('config-log-input').value;
+            const lbId = document.getElementById('config-leaderboard-input').value ? document.getElementById('config-leaderboard-input').value : "";
+            
+            await fetch(`${API_URL}/config`, { 
+                method: 'PUT', 
+                headers: {'Content-Type':'application/json'}, 
+                body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) 
+            });
+            showToast("Configuration sauvegardée");
         }
 
-        async function deleteVouch(id) { if(confirm("Supprimer ce vouch ?")) { showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => { await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' }); loadAllData(); showToast("Supprimé"); }); } }
+        async function deleteVouch(id) {
+            if(confirm("Supprimer ce vouch ?")) {
+                showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
+                    await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
+                    loadAllData(); showToast("Supprimé");
+                });
+            }
+        }
 
-        // --- HELPERS ---
-        function showConfirm(title, msg, actionCallback) { document.getElementById('confirm-title').textContent = title; document.getElementById('confirm-msg').textContent = msg; pendingAction = actionCallback; document.getElementById('modal-confirm').classList.add('active'); }
-        document.getElementById('confirm-btn-action').onclick = () => { if(pendingAction) pendingAction(); closeModal('modal-confirm'); pendingAction = null; };
+        // --- HELPERS MODAL & UI ---
+        function showConfirm(title, msg, actionCallback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent = msg;
+            pendingAction = actionCallback;
+            document.getElementById('modal-confirm').classList.add('active');
+        }
+
+        document.getElementById('confirm-btn-action').onclick = () => {
+            if(pendingAction) pendingAction();
+            closeModal('modal-confirm');
+            pendingAction = null;
+        };
 
         function router(view, btn) {
-            document.querySelectorAll('main section').forEach(el => el.classList.add('hidden'));
-            const section = document.getElementById('view-' + view); if(section) section.classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active');
-            if (view === 'accounting' && charts.revenue === null) { generateReport('today'); }
+            document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-'+view).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            
+            if (view === 'accounting' && charts.revenue === null) {
+                generateReport('today');
+            }
+
+            // Fermer sidebar sur mobile après click
             if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
         }
-        function openEditVendeur(id, discordId, name) { document.getElementById('edit-vnd-id').value = id; document.getElementById('edit-vnd-id-display').value = discordId; document.getElementById('edit-vnd-name').value = name; openModal('modal-vendeur-edit'); }
-        function openEditItem(id, name) { document.getElementById('edit-itm-id').value = id; document.getElementById('edit-itm-name').value = name; openModal('modal-item-edit'); }
-        function openEditPaiement(id, name) { document.getElementById('edit-pay-id').value = id; document.getElementById('edit-pay-name').value = name; openModal('modal-paiement-edit'); }
+
+        function openEditVendeur(id, discordId, name) {
+            document.getElementById('edit-vnd-id').value = id;
+            document.getElementById('edit-vnd-id-display').value = discordId;
+            document.getElementById('edit-vnd-name').value = name;
+            openModal('modal-vendeur-edit');
+        }
+
+        function openEditItem(id, name) {
+            document.getElementById('edit-itm-id').value = id;
+            document.getElementById('edit-itm-name').value = name;
+            openModal('modal-item-edit');
+        }
+
+        function openEditPaiement(id, name) {
+            document.getElementById('edit-pay-id').value = id;
+            document.getElementById('edit-pay-name').value = name;
+            openModal('modal-paiement-edit');
+        }
 
         // Init
         document.addEventListener('DOMContentLoaded', checkLogin);
+
     </script>
 </body>
 </html>
