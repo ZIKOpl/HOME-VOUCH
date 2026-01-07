@@ -44,13 +44,13 @@
 
         /* --- LOGIN PAGE --- */
         #login-page {
-            height: 100vh;
+            height:100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             z-index: 10;
-            padding: 1rem;
+            padding:1rem;
         }
 
         .login-container {
@@ -150,8 +150,7 @@
 
         .table-header {
             padding: 1.5rem; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid var(--border);
-            flex-wrap: wrap; gap: 1rem;
+            align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;
         }
         .table-title { font-size: 1.1rem; font-weight: 600; }
 
@@ -224,56 +223,29 @@
 
         /* --- MOBILE HEADER (HAMBURGER) --- */
         .mobile-header {
-            display: none;
-            height: 60px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1rem;
-            border-bottom: 1px solid var(--border);
+            display: none; height: 60px; background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px); align-items: center; justify-content: space-between;
+            padding: 0 1rem; border-bottom: 1px solid var(--border);
         }
-        .hamburger {
-            font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer;
-        }
+        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
         .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
 
         /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 768px) {
-            /* Layout Adjustments */
             #dashboard-app { flex-direction: column; }
-            
-            /* Sidebar becomes a drawer */
             .sidebar {
-                position: fixed;
-                top: 0; left: 0; bottom: 0;
-                width: 280px;
-                transform: translateX(-100%);
-                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+                position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
+                transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
             }
             .sidebar.mobile-open { transform: translateX(0); }
-
-            /* Show Mobile Header */
             .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; z-index: 900; }
-            
-            /* Adjust Main Content */
-            .main-content { padding: 5rem 1rem 1rem 1rem; /* Add top padding for fixed header */ }
-            
-            /* Grid Stats adjust */
+            .main-content { padding: 5rem 1rem 1rem 1rem; }
             .grid-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
             .stat-value { font-size: 1.8rem; }
             .stat-icon { font-size: 1.5rem; }
-
-            /* Table Headers Stack */
             .table-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-            
-            /* Modal Width */
             .modal { max-width: 100%; padding: 1.5rem; }
-            
-            /* Toast Mobile */
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
-            
-            /* Login Card */
             .login-container { padding: 1.5rem; }
             .login-logo { font-size: 2.5rem; }
         }
@@ -365,10 +337,9 @@
                     <div class="table-header">
                         <h3 class="table-title">Activité Récente</h3>
                     </div>
-                    <!-- Table scrollable container for mobile -->
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th></tr></thead>
+                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th><th>Qté</th></tr></thead>
                             <tbody id="dashboard-table-body"></tbody>
                         </table>
                     </div>
@@ -385,7 +356,7 @@
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th>ID</th><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>ID</th><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Qté</th><th>Actions</th></tr></thead>
                             <tbody id="vouch-table-body"></tbody>
                         </table>
                     </div>
@@ -485,6 +456,10 @@
                 <div class="form-group">
                     <label class="form-label">Prix</label>
                     <input type="text" id="vouch-price" class="form-input" placeholder="Ex: 15€" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" id="vouch-quantity" class="form-input" value="1" min="1" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Note</label>
@@ -654,6 +629,7 @@
                     <td>${v.vendeurName}</td>
                     <td><span class="badge badge-star">${v.note}/5</span></td>
                     <td style="color:var(--text-muted)">${v.item}</td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
                 </tr>
             `).join('');
         }
@@ -667,6 +643,7 @@
                     <td>${v.authorTag}</td>
                     <td>${v.vendeurName}</td>
                     <td><span class="badge badge-star">${v.note}</span></td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
                     <td>
                         <button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
@@ -714,6 +691,7 @@
                 item: document.getElementById('vouch-item').value,
                 paiement: document.getElementById('vouch-pay').value,
                 prix: document.getElementById('vouch-price').value,
+                quantity: parseInt(document.getElementById('vouch-quantity').value),
                 note: parseInt(document.getElementById('vouch-note').value),
                 authorTag: "Admin Dashboard",
                 anonyme: false
