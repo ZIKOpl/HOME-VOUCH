@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Home Market - Vouches & Services</title>
+    <title>Admin Dashboard VouchBot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Librairie Graphiques -->
@@ -12,7 +12,7 @@
     <style>
         :root {
             --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.6); /* Plus transparent pour l'effet verre */
+            --bg-card: rgba(30, 41, 59, 0.7);
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --accent: #8b5cf6;
@@ -22,7 +22,7 @@
             --success: #10b981;
             --warning: #f97316;
             --border: rgba(255, 255, 255, 0.08);
-            --glass: blur(16px);
+            --glass: blur(12px);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -31,158 +31,129 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%), 
-                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 20%);
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
             background-attachment: fixed;
             color: var(--text-main);
             height: 100vh;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-        /* --- GLOBAL BUTTONS --- */
-        .btn-login {
-            background: #5865F2; color: white; padding: 0.8rem 1.5rem;
-            border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
-        }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(88, 101, 242, 0.4); }
-
-        .btn-lang {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: white; padding: 0.4rem 0.8rem; border-radius: 20px;
-            font-size: 0.8rem; cursor: pointer; transition: 0.2s;
-        }
-        .btn-lang:hover, .btn-lang.active { background: var(--primary); border-color: var(--primary); }
-
-        /* --- LANDING / PRESENTATION PAGE --- */
-        #view-landing {
-            height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; text-align: center; padding: 2rem;
+        /* --- LOGIN PAGE --- */
+        #login-page {
+            height:100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding:1rem;
         }
 
-        .landing-content { z-index: 10; max-width: 800px; }
-        .landing-title {
-            font-size: 4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .landing-subtitle {
-            font-size: 1.2rem; color: var(--text-muted); margin-bottom: 3rem;
-            font-weight: 300;
-        }
-
-        /* Bouton Haut Droit */
-        .login-top-right {
-            position: absolute; top: 2rem; right: 2rem;
-        }
-        /* Bouton Bas Gauche */
-        .login-bottom-left {
-            position: absolute; bottom: 2rem; left: 2rem;
-        }
-
-        /* --- PUBLIC VOUCHES PAGE (LAMBDAS) --- */
-        #view-public-vouches {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            min-height: 100vh;
-        }
-
-        .public-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;
-            padding-bottom: 1rem; border-bottom: 1px solid var(--border);
-        }
-
-        .vouch-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;
-        }
-
-        /* CARTE VOUCHE PUBLIQUE */
-        .vouch-card {
+        .login-container {
             background: var(--bg-card);
             backdrop-filter: var(--glass);
+            padding: 2rem;
+            border-radius: 24px;
             border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex; flex-direction: column;
-            height: 100%;
-        }
-        .vouch-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .card-header {
-            padding: 1.2rem 1.5rem 0.5rem;
-            display: flex; justify-content: space-between; align-items: flex-start;
-        }
-        .card-item-name { font-size: 1.2rem; font-weight: 700; color: white; }
-        .card-price { color: var(--success); font-weight: 600; font-size: 1.1rem; }
-        .card-seller { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .login-logo { font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .login-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
 
-        .card-body {
-            padding: 0 1.5rem 1.5rem; flex-grow: 1;
+        .btn-discord {
+            background: #5865F2; color: white; width: 100%; padding: 1rem;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
         }
-        .card-comment {
-            color: var(--text-main); font-size: 0.95rem; line-height: 1.5;
-            font-style: italic;
-            min-height: 60px;
-        }
+        .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(88, 101, 242, 0.4); }
 
-        .card-footer {
-            padding: 1rem 1.5rem 1.5rem;
-            border-top: 1px solid var(--border);
-            background: rgba(0,0,0,0.2);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .card-meta { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.8rem; color: var(--text-muted); }
-        .card-rating { color: var(--danger); /* ÉTOILES ROUGES */ } 
-
-        /* --- DASHBOARD ADMIN (EXISTANT) --- */
-        #dashboard-app { height: 100vh; display: flex; position: relative; }
+        /* --- DASHBOARD LAYOUT --- */
+        #dashboard-app { display: none; height: 100vh; display: flex; position: relative; }
 
         /* Sidebar */
         .sidebar {
-            width: 260px; background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(10px); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 1.5rem;
-            transition: transform 0.3s ease; z-index: 1000;
+            width: 260px;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
-        .brand { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; }
-        .brand i { color: var(--primary); }
-        .nav-btn { background: transparent; border: none; color: var(--text-muted); width: 100%; text-align: left; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease; margin-bottom: 0.5rem; }
-        .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-btn.active { background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent); color: var(--primary); border-left: 3px solid var(--primary); }
 
-        .user-panel { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer; position: relative; }
+        .brand {
+            font-size: 1.5rem; font-weight: 700; color: white;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;
+        }
+        .brand i { color: var(--primary); }
+
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            width: 100%; text-align: left; padding: 0.85rem 1rem;
+            border-radius: 12px; cursor: pointer; font-size: 0.95rem;
+            font-weight: 500; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s ease; margin-bottom: 0.5rem;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-btn.active { 
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent);
+            color: var(--primary); border-left: 3px solid var(--primary);
+        }
+
+        .user-panel {
+            margin-top: auto; display: flex; align-items: center; gap: 10px;
+            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;
+            cursor: pointer; position: relative;
+        }
+        .user-info-display { display: flex; align-items: center; gap: 10px; }
         .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { font-size: 0.9rem; }
         .user-name { font-weight: 600; color: white; }
         .user-status { font-size: 0.75rem; color: var(--success); }
 
         /* USER MENU DROPDOWN (PC) */
-        .user-menu { position: absolute; bottom: 110%; left: 0; width: 100%; background: #1e293b; border: 1px solid var(--border); border-radius: 8px; padding: 5px; display: none; flex-direction: column; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
+        .user-menu {
+            position: absolute; bottom: 110%; left: 0; width: 100%;
+            background: #1e293b; border: 1px solid var(--border); border-radius: 8px;
+            padding: 5px; display: none; flex-direction: column;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
         .user-menu.show { display: flex; }
-        .user-menu-item { padding: 10px; color: var(--text-main); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; border-radius: 4px; transition: 0.2s; }
+        .user-menu-item {
+            padding: 10px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; border-radius: 4px; transition: 0.2s;
+        }
         .user-menu-item:hover { background: rgba(255,255,255,0.1); }
         .user-menu-item.logout { color: var(--danger); }
 
         /* Main Content */
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; }
+        .main-content {
+            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
+        }
         .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         /* Cards Grid */
         .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.3s; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; position: relative;
+            overflow: hidden; transition: transform 0.3s;
+        }
         .stat-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.3); }
         .stat-icon { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; color: rgba(255,255,255,0.05); }
         .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
@@ -190,34 +161,69 @@
         .stat-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; }
 
         /* Data Tables */
-        .table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; width: 100%; }
-        .table-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+        .table-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .table-header {
+            padding: 1.5rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;
+        }
         .table-title { font-size: 1.1rem; font-weight: 600; }
-        .btn-add { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; padding: 0.6rem 1.2rem;
+            border-radius: 8px; font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap;
+        }
         .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
+
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); white-space: nowrap; }
         td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; white-space: nowrap; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
-        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
+        }
         .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
-        .btn-edit { background: rgba(249, 115, 22, 0.1); color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px; }
-        .btn-edit:hover { background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+        .btn-edit {
+            background: rgba(249, 115, 22, 0.1); /* Orange clair */
+            color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px;
+        }
+        .btn-edit:hover {
+            background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
 
         /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s; padding: 1rem;
+        }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal { background: #1e293b; border: 1px solid var(--border); width: 100%; max-width: 450px; border-radius: 16px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s; }
+
+        .modal {
+            background: #1e293b; border: 1px solid var(--border); width: 100%;
+            max-width: 450px; border-radius: 16px; padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: transform 0.3s;
+        }
         .modal-overlay.active .modal { transform: scale(1); }
         .modal h2 { margin-bottom: 1.5rem; color: white; }
         .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
         
         .form-group { margin-bottom: 1.2rem; }
         .form-label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
-        .form-input, .form-select, .form-date { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit; }
+        .form-input, .form-select, .form-date {
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit;
+        }
         .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
 
         .btn-submit { width: 100%; background: var(--primary); color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
@@ -230,36 +236,61 @@
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
         .badge-star { background: rgba(240, 178, 50, 0.15); color: #fbbf24; }
         
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px); opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center; }
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white;
+            padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px);
+            opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center;
+        }
         .toast.show { transform: translateY(0); opacity: 1; }
-        .badge-log { background: rgba(255,255,255,0.1); color: var(--text-muted); font-size: 0.7rem; border-radius: 10px; padding: 2px 6px; }
+
+        /* --- STYLES POUR LE SYSTÈME DE LOGS (NOUVEAU) --- */
+        .badge-log { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); font-size: 0.7rem; border-radius: 10px; padding: 2px 6px; }
         .badge-log.creation { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .badge-log.modification { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
         .badge-log.deletion { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .logs-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; width: 100%; }
+        .logs-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MOBILE HEADER (HAMBURGER) --- */
+        .mobile-header {
+            display: none; height: 60px; background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px); align-items: center; justify-content: space-between;
+            padding: 0 1rem; border-bottom: 1px solid var(--border);
+        }
+        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
+        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
 
         /* --- ACCOUNTING SECTION --- */
-        .accounting-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem; }
+        .accounting-header {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
+        }
         .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
         .date-filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
         .date-filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
         .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; }
         .btn-report:hover { background: #059669; }
-        .preset-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .preset-btn {
+            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border);
+            padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        }
         .preset-btn:hover, .preset-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
 
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
         .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; height: 350px; }
 
-        /* --- MOBILE HEADER (HAMBURGER) --- */
-        .mobile-header { display: none; height: 60px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); align-items: center; justify-content: space-between; padding: 0 1rem; border-bottom: 1px solid var(--border); }
-        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
-        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
-
         /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 768px) {
             #dashboard-app { flex-direction: column; }
-            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
+                transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
             .sidebar.mobile-open { transform: translateX(0); }
             .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; z-index: 900; }
             .main-content { padding: 5rem 1rem 1rem 1rem; }
@@ -269,90 +300,62 @@
             .accounting-header { flex-direction: column; align-items: stretch; gap: 1rem; }
             .btn-report { margin-left: 0; }
             .charts-grid { grid-template-columns: 1fr; }
-            .modal { max-width: 100%; padding: 1.5rem; }
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
-            .landing-title { font-size: 2.5rem; }
-            .login-top-right, .login-bottom-left { position: relative; margin: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- --- MOBILE HEADER (GLOBAL) --- -->
+    <!-- --- MOBILE HEADER --- -->
     <div id="mobile-header" class="mobile-header">
         <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <div class="mobile-logo" id="lang-mobile-logo">HOME MARKET</div>
-        <!-- Lang Switcher Mobile -->
-        <div style="display:flex; gap:10px;">
-            <button class="btn-lang active" onclick="setLang('fr')" id="lang-fr-mobile">FR</button>
-            <button class="btn-lang" onclick="setLang('en')" id="lang-en-mobile">EN</button>
-        </div>
-        <!-- Avatar Mobile (Only Admin) -->
-        <img id="user-avatar-mobile" src="" onclick="openLogoutModal()" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary); display:none;" alt="User">
+        <div class="mobile-logo">HOME MARKET</div>
+        <img id="user-avatar-mobile" src="" onclick="openLogoutModal()" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--primary);" alt="User">
     </div>
 
-    <!-- --- VIEW: LANDING / PRESENTATION --- -->
-    <div id="view-landing" class="hidden">
-        <!-- Lang Switcher Desktop -->
-        <div class="login-top-right" style="display:flex; gap:10px;">
-            <button class="btn-lang active" onclick="setLang('fr')" id="lang-fr">FR</button>
-            <button class="btn-lang" onclick="setLang('en')" id="lang-en">EN</button>
-        </div>
-
-        <div class="landing-content">
-            <h1 class="landing-title" id="txt-landing-title">HOME MARKET</h1>
-            <p class="landing-subtitle" id="txt-landing-sub">La référence pour les échanges et les services de confiance.</p>
-        </div>
-
-        <button class="btn-login login-bottom-left" onclick="discordLogin()">
-            <i class="fa-brands fa-discord"></i> <span id="txt-login">Se connecter</span>
-        </button>
-        
-        <button class="btn-login login-top-right" onclick="discordLogin()">
-            <span id="txt-login-top">Se connecter</span> <i class="fa-brands fa-discord"></i>
-        </button>
-    </div>
-
-    <!-- --- VIEW: PUBLIC VOUCHES (LAMBDAS) --- -->
-    <div id="view-public-vouches" class="hidden">
-        <div class="public-header">
-            <h2 class="header-title" id="txt-public-title">Boutique</h2>
-            <button class="btn-login" onclick="performLogout()"><i class="fa-solid fa-right-from-bracket"></i> <span id="txt-logout">Déconnexion</span></button>
-        </div>
-
-        <div class="vouch-grid" id="public-vouch-grid">
-            <!-- Cards générées en JS -->
+    <!-- --- LOGIN PAGE --- -->
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-logo"><i class="fa-solid fa-rocket"></i></div>
+            <h1 class="login-title">Gestion Vouch Bot</h1>
+            <p class="login-desc">Connectez-vous avec Discord pour accéder à l'interface d'administration sécurisée.</p>
+            <button class="btn-discord" onclick="discordLogin()">
+                <i class="fa-brands fa-discord"></i> Connexion Discord
+            </button>
+            <p id="login-error" style="color:var(--danger); margin-top:1rem; display:none;"></p>
         </div>
     </div>
 
-    <!-- --- DASHBOARD APP (ADMIN) --- -->
+    <!-- --- DASHBOARD APP --- -->
     <div id="dashboard-app" class="hidden">
         <nav class="sidebar" id="sidebar">
-            <div class="brand"><i class="fa-solid fa-layer-group"></i> HOME MARKET</div>
+            <div class="brand">
+                <i class="fa-solid fa-layer-group"></i> HOME MARKET
+            </div>
             <div class="nav-links">
                 <button class="nav-btn active" onclick="router('dashboard', this)">
-                    <i class="fa-solid fa-chart-pie"></i> <span id="txt-dash">Vue d'ensemble</span>
+                    <i class="fa-solid fa-chart-pie"></i> Vue d'ensemble
                 </button>
                 <button class="nav-btn" onclick="router('accounting', this)">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> <span id="txt-acc">Comptabilité</span>
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Comptabilité
                 </button>
                 <button class="nav-btn" onclick="router('vouches', this)">
-                    <i class="fa-solid fa-star"></i> <span id="txt-vouch">Vouches</span>
+                    <i class="fa-solid fa-star"></i> Vouches
                 </button>
                 <button class="nav-btn" onclick="router('vendeurs', this)">
-                    <i class="fa-solid fa-users"></i> <span id="txt-sell">Vendeurs</span>
+                    <i class="fa-solid fa-users"></i> Vendeurs
                 </button>
                 <button class="nav-btn" onclick="router('items', this)">
-                    <i class="fa-solid fa-box-open"></i> <span id="txt-items">Items</span>
+                    <i class="fa-solid fa-box-open"></i> Items
                 </button>
                 <button class="nav-btn" onclick="router('paiements', this)">
-                    <i class="fa-solid fa-wallet"></i> <span id="txt-pay">Paiements</span>
+                    <i class="fa-solid fa-wallet"></i> Paiements
                 </button>
                 <button class="nav-btn" onclick="router('logs', this)">
-                    <i class="fa-solid fa-list-ul"></i> <span id="txt-logs">Logs</span>
+                    <i class="fa-solid fa-list-ul"></i> Logs
                 </button>
                 <button class="nav-btn" onclick="router('config', this)">
-                    <i class="fa-solid fa-sliders"></i> <span id="txt-config">Configuration</span>
+                    <i class="fa-solid fa-sliders"></i> Configuration
                 </button>
             </div>
             
@@ -360,32 +363,49 @@
                 <div class="user-info-display">
                     <img id="user-avatar" src="" alt="Avatar">
                     <div class="user-info">
-                        <div id="user-name" class="user-name">Admin</div>
+                        <div id="user-name" class="user-name">Chargement...</div>
                         <div class="user-status"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Connecté</div>
                     </div>
                 </div>
+                <!-- Menu Déroulant PC -->
                 <div class="user-menu" id="user-menu">
                     <a href="#" class="user-menu-item logout" onclick="openLogoutModal()">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span id="txt-logout">Déconnexion</span>
+                        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
                     </a>
                 </div>
             </div>
         </nav>
 
         <main class="main-content">
+            
             <!-- DASHBOARD HOME -->
             <section id="view-dashboard">
-                <h2 class="header-title" id="txt-dash-title">Vue d'ensemble</h2>
+                <h2 class="header-title">Vue d'ensemble</h2>
                 <div class="grid-stats">
-                    <div class="stat-card"><i class="fa-solid fa-star stat-icon"></i><div class="stat-label" id="lbl-total">Total Vouches</div><div class="stat-value" id="stat-total">0</div></div>
-                    <div class="stat-card"><i class="fa-solid fa-users stat-icon"></i><div class="stat-label" id="lbl-vend">Vendeurs Actifs</div><div class="stat-value" id="stat-vendors">0</div></div>
-                    <div class="stat-card"><i class="fa-solid fa-heart stat-icon"></i><div class="stat-label" id="lbl-sat">Satisfaction</div><div class="stat-value" id="stat-rating">0.0</div></div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-star stat-icon"></i>
+                        <div class="stat-label">Total Vouches</div>
+                        <div class="stat-value" id="stat-total">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-users stat-icon"></i>
+                        <div class="stat-label">Vendeurs Actifs</div>
+                        <div class="stat-value" id="stat-vendors">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-heart stat-icon"></i>
+                        <div class="stat-label">Satisfaction</div>
+                        <div class="stat-value" id="stat-rating">0.0</div>
+                    </div>
                 </div>
+
                 <div class="table-container">
-                    <div class="table-header"><h3 class="table-title" id="lbl-rec-act">Activité Récente</h3></div>
+                    <div class="table-header">
+                        <h3 class="table-title">Activité Récente</h3>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-buy">Acheteur</th><th id="th-sell">Vendeur</th><th id="th-note">Note</th><th id="th-item">Item</th><th id="th-qty">Qté</th></tr></thead>
+                            <thead><tr><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Item</th><th>Qté</th></tr></thead>
                             <tbody id="dashboard-table-body"></tbody>
                         </table>
                     </div>
@@ -394,62 +414,77 @@
 
             <!-- COMPTABILITÉ -->
             <section id="view-accounting" class="hidden">
-                <h2 class="header-title" id="txt-acc-title">Rapports de Comptabilité</h2>
+                <h2 class="header-title">Rapports de Comptabilité</h2>
+                
+                <!-- PRESETS BUTTONS -->
                 <div class="accounting-header">
-                    <div style="color:var(--text-muted); font-size:0.9rem;" id="lbl-period">Période d'analyse :</div>
+                    <div style="color:var(--text-muted); font-size:0.9rem;">Période d'analyse :</div>
                     <div class="date-filters">
-                        <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today" id="lbl-today">Aujourd'hui</button>
-                        <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d" id="lbl-7d">7 Jours</button>
-                        <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d" id="lbl-30d">1 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('90d')" id="btn-preset-90d" id="lbl-90d">3 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('180d')" id="btn-preset-180d" id="lbl-180d">6 Mois</button>
-                        <button class="preset-btn" onclick="generateReport('365d')" id="btn-preset-365d" id="lbl-365d">1 An</button>
-                        <button class="preset-btn" onclick="generateReport('all')" id="btn-preset-all" id="lbl-all">Tout le temps</button>
+                        <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today">Aujourd'hui</button>
+                        <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d">7 Jours</button>
+                        <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d">1 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('90d')" id="btn-preset-90d">3 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('180d')" id="btn-preset-180d">6 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('365d')" id="btn-preset-365d">1 An</button>
+                        <button class="preset-btn" onclick="generateReport('all')" id="btn-preset-all">Tout le temps</button>
                     </div>
                 </div>
+
+                <!-- KPI CARDS -->
                 <div class="grid-stats">
                     <div class="stat-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
                         <i class="fa-solid fa-sack-dollar stat-icon" style="color:var(--success);"></i>
-                        <div class="stat-label" id="lbl-rev">Chiffre d'Affaires</div>
+                        <div class="stat-label">Chiffre d'Affaires</div>
                         <div class="stat-value" id="acc-revenue">0 €</div>
-                        <div class="stat-sub" id="lbl-rev-sub">Revenue Totale (Prix * Qté)</div>
+                        <div class="stat-sub">Revenue Totale (Prix * Qté)</div>
                     </div>
                     <div class="stat-card">
                         <i class="fa-solid fa-crown stat-icon" style="color:var(--warning);"></i>
-                        <div class="stat-label" id="lbl-top-sell">Top Vendeur</div>
+                        <div class="stat-label">Top Vendeur</div>
                         <div class="stat-value" id="acc-top-seller">-</div>
                         <div class="stat-sub" id="acc-top-seller-val">0 €</div>
                     </div>
                     <div class="stat-card">
                         <i class="fa-solid fa-chart-bar stat-icon" style="color:var(--primary);"></i>
-                        <div class="stat-label" id="lbl-vol">Volume Ventes</div>
+                        <div class="stat-label">Volume Ventes</div>
                         <div class="stat-value" id="acc-volume">0</div>
-                        <div class="stat-sub" id="lbl-vol-sub">Nombre de ventes total</div>
+                        <div class="stat-sub">Nombre de ventes total</div>
                     </div>
                     <div class="stat-card">
                         <i class="fa-solid fa-boxes-stacked stat-icon" style="color:var(--accent);"></i>
-                        <div class="stat-label" id="lbl-items">Items Vendus</div>
+                        <div class="stat-label">Items Vendus</div>
                         <div class="stat-value" id="acc-qty">0</div>
-                        <div class="stat-sub" id="lbl-items-sub">Quantité totale d'objets</div>
+                        <div class="stat-sub">Quantité totale d'objets</div>
                     </div>
                 </div>
+
+                <!-- CHARTS -->
                 <div class="charts-grid">
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);" id="lbl-chart-rev">Évolution du Chiffre d'Affaires</h4><canvas id="chart-revenue"></canvas></div>
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);" id="lbl-chart-sell">Top Vendeurs</h4><canvas id="chart-sellers"></canvas></div>
-                    <div class="chart-container"><h4 style="margin-bottom:1rem; color:var(--text-main);" id="lbl-chart-item">Top Items</h4><canvas id="chart-items"></canvas></div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Évolution du Chiffre d'Affaires</h4>
+                        <canvas id="chart-revenue"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Vendeurs</h4>
+                        <canvas id="chart-sellers"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Items</h4>
+                        <canvas id="chart-items"></canvas>
+                    </div>
                 </div>
             </section>
 
             <!-- VOUCHES -->
             <section id="view-vouches" class="hidden">
-                <h2 class="header-title" id="txt-vouch-title">Gestion des Vouches</h2>
+                <h2 class="header-title">Gestion des Vouches</h2>
                 <div class="table-container">
                     <div class="table-header">
                         <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-id">ID</th><th id="th-buy2">Acheteur</th><th id="th-sell2">Vendeur</th><th id="th-note2">Note</th><th id="th-qty2">Qté</th><th id="th-act">Actions</th></tr></thead>
+                            <thead><tr><th>ID</th><th>Acheteur</th><th>Vendeur</th><th>Note</th><th>Qté</th><th>Actions</th></tr></thead>
                             <tbody id="vouch-table-body"></tbody>
                         </table>
                     </div>
@@ -458,12 +493,15 @@
 
             <!-- VENDEURS -->
             <section id="view-vendeurs" class="hidden">
-                <h2 class="header-title" id="txt-sell-title">Gestion des Vendeurs</h2>
+                <h2 class="header-title">Gestion des Vendeurs</h2>
                 <div class="table-container">
-                    <div class="table-header"><h3 class="table-title" id="lbl-sell-list">Liste des vendeurs enregistrés</h3><button class="btn-add" onclick="openModal('modal-vendeur')"><i class="fa-solid fa-plus"></i> <span id="txt-add">Ajouter</span></button></div>
+                    <div class="table-header">
+                        <h3 class="table-title">Liste des vendeurs enregistrés</h3>
+                        <button class="btn-add" onclick="openModal('modal-vendeur')"><i class="fa-solid fa-plus"></i> Ajouter</button>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-discord">Discord ID</th><th id="th-name">Nom d'affichage</th><th id="th-act2">Actions</th></tr></thead>
+                            <thead><tr><th>Discord ID</th><th>Nom d'affichage</th><th>Actions</th></tr></thead>
                             <tbody id="vendeur-table-body"></tbody>
                         </table>
                     </div>
@@ -472,12 +510,15 @@
 
             <!-- ITEMS -->
             <section id="view-items" class="hidden">
-                <h2 class="header-title" id="txt-items-title">Catalogue Items</h2>
+                <h2 class="header-title">Catalogue Items</h2>
                 <div class="table-container">
-                    <div class="table-header"><h3 class="table-title" id="lbl-items-list">Items disponibles à la vente</h3><button class="btn-add" onclick="openModal('modal-item')"><i class="fa-solid fa-plus"></i> <span id="txt-add2">Ajouter</span></button></div>
+                    <div class="table-header">
+                        <h3 class="table-title">Items disponibles à la vente</h3>
+                        <button class="btn-add" onclick="openModal('modal-item')"><i class="fa-solid fa-plus"></i> Ajouter</button>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-name">Nom de l'item</th><th id="th-act3">Actions</th></tr></thead>
+                            <thead><tr><th>Nom de l'item</th><th>Actions</th></tr></thead>
                             <tbody id="item-table-body"></tbody>
                         </table>
                     </div>
@@ -486,26 +527,32 @@
 
             <!-- PAIEMENTS -->
             <section id="view-paiements" class="hidden">
-                <h2 class="header-title" id="txt-pay-title">Moyens de Paiement</h2>
+                <h2 class="header-title">Moyens de Paiement</h2>
                 <div class="table-container">
-                    <div class="table-header"><h3 class="table-title" id="lbl-pay-list">Méthodes acceptées</h3><button class="btn-add" onclick="openModal('modal-paiement')"><i class="fa-solid fa-plus"></i> <span id="txt-add3">Ajouter</span></button></div>
+                    <div class="table-header">
+                        <h3 class="table-title">Méthodes acceptées</h3>
+                        <button class="btn-add" onclick="openModal('modal-paiement')"><i class="fa-solid fa-plus"></i> Ajouter</button>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-pay">Nom</th><th id="th-act4">Actions</th></tr></thead>
+                            <thead><tr><th>Nom</th><th>Actions</th></tr></thead>
                             <tbody id="paiement-table-body"></tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- LOGS SECTION -->
+            <!-- LOGS SECTION (NOUVEAU) -->
             <section id="view-logs" class="hidden">
-                <h2 class="header-title" id="txt-logs-title">Journal d'Activité</h2>
+                <h2 class="header-title">Journal d'Activité</h2>
                 <div class="logs-container">
-                    <div class="table-header"><h3 class="table-title" id="lbl-logs-hist">Historique complet des actions</h3><button class="btn-add" onclick="exportLogs()" style="background:var(--text-muted);"><i class="fa-solid fa-download"></i> <span id="txt-export">Exporter</span></button></div>
+                    <div class="table-header">
+                        <h3 class="table-title">Historique complet des actions</h3>
+                        <button class="btn-add" onclick="exportLogs()" style="background:var(--text-muted);"><i class="fa-solid fa-download"></i> Exporter</button>
+                    </div>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th id="th-hour">Heure</th><th id="th-act">Action</th><th id="th-elem">Élément</th><th id="th-det">Détails</th><th id="th-auth">Auteur</th></tr></thead>
+                            <thead><tr><th>Heure</th><th>Action</th><th>Élément</th><th>Détails</th><th>Auteur</th></tr></thead>
                             <tbody id="logs-table-body"></tbody>
                         </table>
                     </div>
@@ -514,42 +561,44 @@
 
             <!-- CONFIG -->
             <section id="view-config" class="hidden">
-                <h2 class="header-title" id="txt-config-title">Configuration Globale</h2>
+                <h2 class="header-title">Configuration Globale</h2>
                 <div class="stat-card" style="max-width:600px;">
                     <div class="form-group">
-                        <label class="form-label" id="lbl-embed">Couleur des Embeds</label>
+                        <label class="form-label">Couleur des Embeds</label>
                         <input type="color" id="config-color-input" class="form-input" style="height:50px; cursor:pointer;">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" id="lbl-log">Log Channel ID</label>
+                        <label class="form-label">Log Channel ID</label>
                         <input type="text" id="config-log-input" class="form-input" placeholder="123456...">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" id="lbl-lb">Leaderboard Channel ID</label>
+                        <label class="form-label">Leaderboard Channel ID</label>
                         <input type="text" id="config-leaderboard-input" class="form-input" placeholder="ID du salon du leaderboard">
                     </div>
-                    <button class="btn-submit" onclick="saveConfig()" id="txt-save">Sauvegarder la configuration</button>
+                    <button class="btn-submit" onclick="saveConfig()">Sauvegarder la configuration</button>
                 </div>
             </section>
+
         </main>
     </div>
 
     <!-- --- MODALS --- -->
+
     <!-- Modal Vendeur (CRÉER) -->
     <div id="modal-vendeur" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-vendeur')">&times;</button>
-            <h2 id="txt-add-vnd">Ajouter Vendeur</h2>
+            <h2>Ajouter Vendeur</h2>
             <form onsubmit="submitVendeur(event)">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-disc">Discord ID</label>
+                    <label class="form-label">Discord ID</label>
                     <input type="text" id="vnd-id" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" id="lbl-disp">Nom d'affichage</label>
+                    <label class="form-label">Nom d'affichage</label>
                     <input type="text" id="vnd-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-create">Créer</button>
+                <button type="submit" class="btn-submit">Créer</button>
             </form>
         </div>
     </div>
@@ -558,18 +607,18 @@
     <div id="modal-vendeur-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-vendeur-edit')">&times;</button>
-            <h2 id="txt-mod-vnd">Modifier Vendeur</h2>
+            <h2>Modifier Vendeur</h2>
             <form onsubmit="submitEditVendeur(event)">
                 <input type="hidden" id="edit-vnd-id">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-disc2">Discord ID</label>
+                    <label class="form-label">Discord ID</label>
                     <input type="text" id="edit-vnd-id-display" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" id="lbl-disp2">Nom d'affichage</label>
+                    <label class="form-label">Nom d'affichage</label>
                     <input type="text" id="edit-vnd-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-save">Enregistrer</button>
+                <button type="submit" class="btn-submit">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -578,13 +627,13 @@
     <div id="modal-item" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-item')">&times;</button>
-            <h2 id="txt-add-itm">Nouvel Item</h2>
+            <h2>Nouvel Item</h2>
             <form onsubmit="submitItem(event)">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-itm">Nom de l'item</label>
+                    <label class="form-label">Nom de l'item</label>
                     <input type="text" id="itm-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-add-btn">Ajouter</button>
+                <button type="submit" class="btn-submit">Ajouter</button>
             </form>
         </div>
     </div>
@@ -593,14 +642,14 @@
     <div id="modal-item-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-item-edit')">&times;</button>
-            <h2 id="txt-mod-itm">Modifier Item</h2>
+            <h2>Modifier Item</h2>
             <form onsubmit="submitEditItem(event)">
                 <input type="hidden" id="edit-itm-id">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-itm2">Nom de l'item</label>
+                    <label class="form-label">Nom de l'item</label>
                     <input type="text" id="edit-itm-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-save2">Enregistrer</button>
+                <button type="submit" class="btn-submit">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -609,13 +658,13 @@
     <div id="modal-paiement" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-paiement')">&times;</button>
-            <h2 id="txt-add-pay">Nouveau Paiement</h2>
+            <h2>Nouveau Paiement</h2>
             <form onsubmit="submitPaiement(event)">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-pay">Nom (Ex: PayPal)</label>
+                    <label class="form-label">Nom (Ex: PayPal)</label>
                     <input type="text" id="pay-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-add-btn2">Ajouter</button>
+                <button type="submit" class="btn-submit">Ajouter</button>
             </form>
         </div>
     </div>
@@ -624,14 +673,14 @@
     <div id="modal-paiement-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-paiement-edit')">&times;</button>
-            <h2 id="txt-mod-pay">Modifier Paiement</h2>
+            <h2>Modifier Paiement</h2>
             <form onsubmit="submitEditPaiement(event)">
                 <input type="hidden" id="edit-pay-id">
                 <div class="form-group">
-                    <label class="form-label" id="lbl-pay2">Nom</label>
+                    <label class="form-label">Nom</label>
                     <input type="text" id="edit-pay-name" class="form-input" required>
                 </div>
-                <button type="submit" class="btn-submit" id="txt-save3">Enregistrer</button>
+                <button type="submit" class="btn-submit">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -645,8 +694,8 @@
             <h2 id="confirm-title" style="margin-bottom: 0.5rem;">Confirmer ?</h2>
             <p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 2rem;">Voulez-vous vraiment effectuer cette action ?</p>
             <div style="display: flex; gap: 10px;">
-                <button class="btn-cancel" onclick="closeModal('modal-confirm')" id="txt-cancel">Annuler</button>
-                <button class="btn-submit" id="confirm-btn-action" style="background: var(--danger);" id="txt-conf">Confirmer</button>
+                <button class="btn-cancel" onclick="closeModal('modal-confirm')">Annuler</button>
+                <button class="btn-submit" id="confirm-btn-action" style="background: var(--danger);">Confirmer</button>
             </div>
         </div>
     </div>
@@ -657,11 +706,11 @@
             <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;">
                 <i class="fa-solid fa-power-off"></i>
             </div>
-            <h2 style="margin-bottom: 0.5rem;" id="txt-logout-title">Déconnexion</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;" id="txt-logout-msg">Êtes-vous sûr de vouloir quitter le panneau ?</p>
+            <h2 style="margin-bottom: 0.5rem;">Déconnexion</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Êtes-vous sûr de vouloir quitter le panneau ?</p>
             <div style="display: flex; gap: 10px;">
-                <button class="btn-cancel" onclick="closeModal('modal-logout')" id="txt-cancel2">Annuler</button>
-                <button class="btn-submit" style="background: var(--danger);" onclick="performLogout()" id="btn-discon">Déconnecter</button>
+                <button class="btn-cancel" onclick="closeModal('modal-logout')">Annuler</button>
+                <button class="btn-submit" style="background: var(--danger);" onclick="performLogout()">Déconnecter</button>
             </div>
         </div>
     </div>
@@ -677,275 +726,10 @@
         // --- ETAT GLOBAL ---
         let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {}, user: {} };
         let pendingAction = null; 
-        let charts = { revenue: null, sellers: null, items: null }; 
-        let activityLogs = [];
-        let currentLang = 'fr';
-
-        // --- TRANSLATIONS ---
-        const translations = {
-            fr: {
-                landingTitle: "HOME MARKET",
-                landingSub: "La référence pour les échanges et les services de confiance.",
-                login: "Se connecter",
-                publicTitle: "Boutique",
-                logout: "Déconnexion",
-                // Admin Menus
-                dash: "Vue d'ensemble",
-                acc: "Comptabilité",
-                vouch: "Vouches",
-                sell: "Vendeurs",
-                item: "Items",
-                pay: "Paiements",
-                logs: "Logs",
-                config: "Configuration",
-                // Admin Page
-                total: "Total Vouches",
-                vend: "Vendeurs Actifs",
-                sat: "Satisfaction",
-                recAct: "Activité Récente",
-                // Accounting
-                accTitle: "Rapports de Comptabilité",
-                period: "Période d'analyse :",
-                rev: "Chiffre d'Affaires",
-                revSub: "Revenue Totale (Prix * Qté)",
-                topSell: "Top Vendeur",
-                vol: "Volume Ventes",
-                volSub: "Nombre de ventes total",
-                itSub: "Quantité totale d'objets",
-                chartRev: "Évolution du Chiffre d'Affaires",
-                chartSell: "Top Vendeurs",
-                chartItem: "Top Items",
-                // Tables
-                add: "Ajouter",
-                actions: "Actions",
-                discordId: "Discord ID",
-                dispName: "Nom d'affichage",
-                itemName: "Nom de l'item",
-                payName: "Nom",
-                // Logs
-                logsTitle: "Journal d'Activité",
-                logsHist: "Historique complet des actions",
-                export: "Exporter",
-                hour: "Heure",
-                act: "Action",
-                elem: "Élément",
-                det: "Détails",
-                auth: "Auteur",
-                // Forms
-                lblDisc: "Discord ID",
-                lblDisp: "Nom d'affichage",
-                addVnd: "Ajouter Vendeur",
-                modVnd: "Modifier Vendeur",
-                addItm: "Nouvel Item",
-                modItm: "Modifier Item",
-                addPay: "Nouveau Paiement",
-                modPay: "Modifier Paiement",
-                saveConf: "Sauvegarder la configuration",
-                lblEmbed: "Couleur des Embeds",
-                lblLog: "Log Channel ID",
-                lblLb: "Leaderboard Channel ID",
-                // Presets
-                today: "Aujourd'hui",
-                days7: "7 Jours",
-                month1: "1 Mois",
-                month3: "3 Mois",
-                month6: "6 Mois",
-                year1: "1 An",
-                all: "Tout le temps",
-                // Misc
-                create: "Créer",
-                save: "Enregistrer",
-                confirm: "Confirmer ?",
-                confirmMsg: "Voulez-vous vraiment effectuer cette action ?",
-                logoutTitle: "Déconnexion",
-                logoutMsg: "Êtes-vous sûr de vouloir quitter le panneau ?"
-            },
-            en: {
-                landingTitle: "HOME MARKET",
-                landingSub: "The reference for exchanges and trusted services.",
-                login: "Login",
-                publicTitle: "Store",
-                logout: "Logout",
-                // Admin Menus
-                dash: "Overview",
-                acc: "Accounting",
-                vouch: "Vouches",
-                sell: "Sellers",
-                item: "Items",
-                pay: "Payments",
-                logs: "Logs",
-                config: "Configuration",
-                // Admin Page
-                total: "Total Vouches",
-                vend: "Active Sellers",
-                sat: "Satisfaction",
-                recAct: "Recent Activity",
-                // Accounting
-                accTitle: "Accounting Reports",
-                period: "Analysis Period :",
-                rev: "Revenue",
-                revSub: "Total Revenue (Price * Qty)",
-                topSell: "Top Seller",
-                vol: "Sales Volume",
-                volSub: "Total number of sales",
-                itSub: "Total items sold",
-                chartRev: "Revenue Evolution",
-                chartSell: "Top Sellers",
-                chartItem: "Top Items",
-                // Tables
-                add: "Add",
-                actions: "Actions",
-                discordId: "Discord ID",
-                dispName: "Display Name",
-                itemName: "Item Name",
-                payName: "Name",
-                // Logs
-                logsTitle: "Activity Log",
-                logsHist: "Full action history",
-                export: "Export",
-                hour: "Time",
-                act: "Action",
-                elem: "Element",
-                det: "Details",
-                auth: "Author",
-                // Forms
-                lblDisc: "Discord ID",
-                lblDisp: "Display Name",
-                addVnd: "Add Seller",
-                modVnd: "Modify Seller",
-                addItm: "New Item",
-                modItm: "Modify Item",
-                addPay: "New Payment",
-                modPay: "Modify Payment",
-                saveConf: "Save Configuration",
-                lblEmbed: "Embed Color",
-                lblLog: "Log Channel ID",
-                lblLb: "Leaderboard Channel ID",
-                // Presets
-                today: "Today",
-                days7: "7 Days",
-                month1: "1 Month",
-                month3: "3 Months",
-                month6: "6 Months",
-                year1: "1 Year",
-                all: "All Time",
-                // Misc
-                create: "Create",
-                save: "Save",
-                confirm: "Confirm?",
-                confirmMsg: "Are you sure you want to perform this action?",
-                logoutTitle: "Logout",
-                logoutMsg: "Are you sure you want to leave the panel?"
-            }
-        };
+        let charts = { revenue: null, sellers: null, items: null }; // Stockage Chart.js
+        let activityLogs = []; // SYSTEME DE LOGS LOCAL
 
         // --- UI UTILS ---
-        function setLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.btn-lang').forEach(b => b.classList.remove('active'));
-            document.getElementById(`lang-${lang}`).classList.add('active');
-            if(window.innerWidth <= 768) {
-                document.getElementById(`lang-${lang}-mobile`).classList.add('active');
-            }
-            applyLanguage();
-        }
-
-        function applyLanguage() {
-            const t = translations[currentLang];
-            document.getElementById('txt-landing-title').textContent = t.landingTitle;
-            document.getElementById('txt-landing-sub').textContent = t.landingSub;
-            document.getElementById('txt-login').textContent = t.login;
-            document.getElementById('txt-login-top').textContent = t.login;
-            document.getElementById('txt-public-title').textContent = t.publicTitle;
-            document.getElementById('txt-logout').textContent = t.logout;
-            
-            // Admin Nav
-            document.getElementById('txt-dash').textContent = t.dash;
-            document.getElementById('txt-acc').textContent = t.acc;
-            document.getElementById('txt-vouch').textContent = t.vouch;
-            document.getElementById('txt-sell').textContent = t.sell;
-            document.getElementById('txt-items').textContent = t.item;
-            document.getElementById('txt-pay').textContent = t.pay;
-            document.getElementById('txt-logs').textContent = t.logs;
-            document.getElementById('txt-config').textContent = t.config;
-
-            // Admin Page
-            document.getElementById('txt-dash-title').textContent = t.recAct;
-            document.getElementById('lbl-total').textContent = t.total;
-            document.getElementById('lbl-vend').textContent = t.vend;
-            document.getElementById('lbl-sat').textContent = t.sat;
-            // Accounting
-            document.getElementById('txt-acc-title').textContent = t.accTitle;
-            document.getElementById('lbl-period').textContent = t.period;
-            document.getElementById('lbl-rev').textContent = t.rev;
-            document.getElementById('lbl-rev-sub').textContent = t.revSub;
-            document.getElementById('lbl-top-sell').textContent = t.topSell;
-            document.getElementById('lbl-vol').textContent = t.vol;
-            document.getElementById('lbl-vol-sub').textContent = t.volSub;
-            document.getElementById('lbl-items').textContent = t.itSub;
-            document.getElementById('lbl-chart-rev').textContent = t.chartRev;
-            document.getElementById('lbl-chart-sell').textContent = t.chartSell;
-            document.getElementById('lbl-chart-item').textContent = t.chartItem;
-            // Presets
-            document.getElementById('btn-preset-today').textContent = t.today;
-            document.getElementById('btn-preset-7d').textContent = t.days7;
-            document.getElementById('btn-preset-30d').textContent = t.month1;
-            document.getElementById('btn-preset-90d').textContent = t.month3;
-            document.getElementById('btn-preset-180d').textContent = t.month6;
-            document.getElementById('btn-preset-365d').textContent = t.year1;
-            document.getElementById('btn-preset-all').textContent = t.all;
-            // Headers
-            document.getElementById('th-buy').textContent = t.discordId; // Fallback
-            document.getElementById('th-sell').textContent = t.dispName;
-            document.getElementById('th-note').textContent = t.sat;
-            document.getElementById('th-item').textContent = t.itemName;
-            document.getElementById('th-qty').textContent = t.payName; // Fallback
-            
-            // Modals Forms
-            document.getElementById('lbl-add-vnd').textContent = t.addVnd;
-            document.getElementById('lbl-mod-vnd').textContent = t.modVnd;
-            document.getElementById('lbl-add-itm').textContent = t.addItm;
-            document.getElementById('lbl-mod-itm').textContent = t.modItm;
-            document.getElementById('lbl-add-pay').textContent = t.addPay;
-            document.getElementById('lbl-mod-pay').textContent = t.modPay;
-            document.getElementById('txt-save').textContent = t.save;
-            document.getElementById('txt-save2').textContent = t.save;
-            document.getElementById('txt-save3').textContent = t.save;
-            document.getElementById('txt-create').textContent = t.create;
-            document.getElementById('txt-add-btn').textContent = t.add;
-            document.getElementById('txt-add-btn2').textContent = t.add;
-            document.getElementById('txt-add-btn3').textContent = t.add;
-            document.getElementById('lbl-disc').textContent = t.lblDisc;
-            document.getElementById('lbl-disp').textContent = t.lblDisp;
-            document.getElementById('lbl-itm').textContent = t.lblItem;
-            document.getElementById('lbl-pay').textContent = t.lblPay;
-            document.getElementById('txt-config-title').textContent = t.config;
-            document.getElementById('lbl-embed').textContent = t.lblEmbed;
-            document.getElementById('lbl-log').textContent = t.lblLog;
-            document.getElementById('lbl-lb').textContent = t.lblLb;
-            
-            // Logs
-            document.getElementById('txt-logs-title').textContent = t.logsTitle;
-            document.getElementById('lbl-logs-hist').textContent = t.logsHist;
-            document.getElementById('txt-export').textContent = t.export;
-            document.getElementById('th-hour').textContent = t.hour;
-            document.getElementById('th-act').textContent = t.act;
-            document.getElementById('th-elem').textContent = t.elem;
-            document.getElementById('th-det').textContent = t.det;
-            document.getElementById('th-auth').textContent = t.auth;
-
-            // Confirm
-            document.getElementById('txt-cancel').textContent = t.cancel;
-            document.getElementById('txt-cancel2').textContent = t.cancel;
-            document.getElementById('txt-conf').textContent = t.confirm;
-            document.getElementById('confirm-title').textContent = t.confirm;
-            document.getElementById('confirm-msg').textContent = t.confirmMsg;
-            // Logout
-            document.getElementById('txt-logout-title').textContent = t.logoutTitle;
-            document.getElementById('txt-logout-msg').textContent = t.logoutMsg;
-            document.getElementById('btn-discon').textContent = t.logout;
-        }
-
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
         function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('show'); }
         function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
@@ -964,11 +748,7 @@
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const token = fragment.get('access_token') || localStorage.getItem('discord_token');
 
-            // Si pas de token, afficher Landing Page
-            if (!token) {
-                document.getElementById('view-landing').classList.remove('hidden');
-                return;
-            }
+            if (!token) return showLogin();
 
             try {
                 const res = await fetch(`${API_URL}/auth/verify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token }) });
@@ -976,86 +756,39 @@
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
+                    // Nettoyer l'URL
                     history.pushState("", document.title, window.location.pathname);
                     
                     document.getElementById('user-name').textContent = data.username;
                     document.getElementById('user-avatar').src = data.avatar;
                     document.getElementById('user-avatar-mobile').src = data.avatar;
-                    document.getElementById('user-avatar-mobile').style.display = 'block'; // Montrer avatar sur mobile
-                    db.user = { tag: data.username, isAdmin: data.isAdmin || data.role === 'admin' };
-
-                    // LOGICIQUE DE REDIRECTION ADMIN VS LAMBDA
-                    if (db.user.isAdmin) {
-                        // ADMIN : Afficher le dashboard
-                        document.getElementById('view-landing').classList.add('hidden');
-                        document.getElementById('view-public-vouches').classList.add('hidden');
-                        document.getElementById('dashboard-app').classList.remove('hidden');
-                        document.getElementById('dashboard-app').style.display = 'flex';
-                        showDashboard();
-                    } else {
-                        // LAMBDA : Afficher la page publique
-                        document.getElementById('view-landing').classList.add('hidden');
-                        document.getElementById('dashboard-app').classList.add('hidden'); // Cacher sidebar admin
-                        document.getElementById('view-public-vouches').classList.remove('hidden');
-                        loadPublicVouches();
-                    }
+                    db.user = { tag: data.username }; // Pour les logs
+                    
+                    showDashboard();
                     loadAllData();
                 } else {
                     localStorage.removeItem('discord_token');
-                    document.getElementById('view-landing').classList.remove('hidden');
+                    document.getElementById('login-error').style.display = 'block';
+                    document.getElementById('login-error').textContent = data.error || "Accès refusé";
                 }
             } catch (e) { console.error(e); }
         }
 
-        function showDashboard() { document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
+        function showLogin() { document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-app').classList.add('hidden'); }
+        function showDashboard() { document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-app').classList.remove('hidden'); document.getElementById('dashboard-app').style.display = 'flex'; }
 
-        // --- PUBLIC VOUCHES RENDERING ---
-        function loadPublicVouches() {
-            if(!db.vouches || db.vouches.length === 0) {
-                document.getElementById('public-vouch-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Aucun vouch disponible pour le moment.</div>`;
-                return;
-            }
-
-            // Trier du plus récent au plus ancien
-            const sorted = [...db.vouches].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            document.getElementById('public-vouch-grid').innerHTML = sorted.map(v => {
-                const date = new Date(v.createdAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' });
-                // Générer les étoiles (ROUGES)
-                let stars = '';
-                for(let i=1; i<=5; i++) {
-                    stars += i <= v.note ? '<i class="fa-solid fa-star" style="color:var(--danger);"></i>' : '<i class="fa-solid fa-star" style="color:rgba(255,255,255,0.1);"></i>';
-                }
-
-                return `
-                    <div class="vouch-card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-item-name">${v.item}</div>
-                                <div class="card-price">${v.prix}</div>
-                                <div class="card-seller">${v.vendeurName}</div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-comment">"${v.comment}"</div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-meta">
-                                <span><i class="fa-regular fa-clock"></i> ${date}</span>
-                                <span><i class="fa-regular fa-user"></i> ${v.authorTag}</span>
-                                <span>Qté: ${v.quantity || 1}</span>
-                            </div>
-                            <div class="card-rating">${stars} (${v.note}/5)</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // --- SYSTEME DE LOGS ---
+        // --- SYSTEME DE LOGS (NOUVEAU) ---
         function logAction(type, entityName, details) {
             const now = new Date();
-            const logEntry = { date: now, timestamp: now.getTime(), type: type, entity: entityName, details: details, author: db.user.tag || "Utilisateur" };
+            const logEntry = {
+                date: now,
+                timestamp: now.getTime(),
+                type: type, // CRÉATION, MODIFICATION, SUPPRESSION
+                entity: entityName, // Vendeur, Item, etc.
+                details: details,
+                author: db.user.tag || "Utilisateur"
+            };
+            // Ajouter au début du tableau
             activityLogs.unshift(logEntry);
             renderLogs();
         }
@@ -1066,13 +799,18 @@
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Aucune activité enregistrée.</td></tr>`;
                 return;
             }
+
+            // Formatage de la date
             tbody.innerHTML = activityLogs.map(log => {
-                let badgeClass = "badge-log"; let typeText = "";
+                let badgeClass = "badge-log";
+                let typeText = "";
+                
                 if(log.type === 'CRÉATION') { badgeClass += " creation"; typeText = "Ajout"; }
                 else if(log.type === 'MODIFICATION') { badgeClass += " modification"; typeText = "Modif"; }
                 else if(log.type === 'SUPPRESSION') { badgeClass += " deletion"; typeText = "Supp"; }
+
                 const dateStr = new Date(log.timestamp).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
-                const t = translations[currentLang];
+
                 return `
                     <tr>
                         <td style="color:var(--text-muted); font-size:0.85rem;">${dateStr}</td>
@@ -1151,13 +889,12 @@
         function renderVouches() {
             const search = document.getElementById('search-input')?.value.toLowerCase() || "";
             const filtered = db.vouches.filter(v => v.vendeurName.toLowerCase().includes(search) || v.authorTag.toLowerCase().includes(search));
-            const t = translations[currentLang];
             document.getElementById('vouch-table-body').innerHTML = filtered.map(v => `
                 <tr>
                     <td>#${v.vouchId}</td>
                     <td>${v.authorTag}</td>
                     <td>${v.vendeurName}</td>
-                    <td><span class="badge badge-star">${v.note}/5</span></td>
+                    <td><span class="badge badge-star">${v.note}</span></td>
                     <td>${v.quantity ? v.quantity : 'N/A'}</td>
                     <td>
                         <button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button>
@@ -1203,23 +940,54 @@
             `).join('');
         }
 
-        // --- COMPTABILITÉ ---
+        // --- COMPTABILITÉ (LE NOUVEAU TRUC) ---
+
+        // Helper: Extraire prix en float
         function parsePrice(priceStr) { return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0; }
+
+        // Logique des présélections de dates
         function getPresetDates(preset) {
-            const end = new Date(); const start = new Date(); end.setHours(23, 59, 59, 999);
+            const end = new Date();
+            const start = new Date();
+            
+            end.setHours(23, 59, 59, 999);
+
             switch(preset) {
-                case 'today': start.setHours(0, 0, 0, 0); break;
-                case '7d': start.setDate(start.getDate() - 7); break;
-                case '30d': start.setDate(start.getDate() - 30); break;
-                case '90d': start.setDate(start.getDate() - 90); break;
-                case '180d': start.setDate(start.getDate() - 180); break;
-                case '365d': start.setFullYear(start.getFullYear() - 1); break;
-                case 'all': if(db.vouches.length > 0) { start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt)); } else { start.setTime(new Date()); } break;
-                default: return null;
+                case 'today':
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '7d':
+                    start.setDate(start.getDate() - 7);
+                    break;
+                case '30d':
+                    start.setDate(start.getDate() - 30);
+                    break;
+                case '90d':
+                    start.setDate(start.getDate() - 90);
+                    break;
+                case '180d':
+                    start.setDate(start.getDate() - 180);
+                    break;
+                case '365d':
+                    start.setFullYear(start.getFullYear() - 1);
+                    break;
+                case 'all':
+                    // Premier vouch de la DB
+                    if(db.vouches.length > 0) {
+                        start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt));
+                    } else {
+                        start.setTime(new Date()); // Si vide, auj
+                    }
+                    break;
+                default:
+                    return null;
             }
             return { start, end };
         }
+
+        // Fonction principale de génération
         async function generateReport(preset) {
+            // Bouton visuel
             document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
             const btn = document.getElementById(`btn-preset-${preset}`);
             if(btn) btn.classList.add('active');
@@ -1228,28 +996,52 @@
             if (!dates) return;
 
             const { start, end } = dates;
-            const filteredVouches = db.vouches.filter(v => { const vDate = new Date(v.createdAt); return vDate >= start && vDate <= end; });
 
-            if (filteredVouches.length === 0) { resetAccountingStats(); return; }
+            // Filtrer les vouches
+            const filteredVouches = db.vouches.filter(v => {
+                const vDate = new Date(v.createdAt);
+                return vDate >= start && vDate <= end;
+            });
 
-            let totalRevenue = 0; let totalVolume = 0; let totalQuantity = 0;
-            const sellerRevenue = {}; const itemSales = {};
+            if (filteredVouches.length === 0) {
+                resetAccountingStats(); // Affiche 0 ou N/A si rien
+                return; 
+            }
+
+            // --- CALCULS ---
+            let totalRevenue = 0;
+            let totalVolume = 0;
+            let totalQuantity = 0;
+            const sellerRevenue = {};
+            const itemSales = {};
+
             filteredVouches.forEach(v => {
                 const price = parsePrice(v.prix);
-                const qty = v.quantity || 1;
+                const qty = v.quantity || 1; // Si pas de quantité, on considère 1 (vente d'un service)
                 const revenue = price * qty;
-                totalRevenue += revenue; totalVolume += 1; totalQuantity += qty;
+
+                totalRevenue += revenue;
+                totalVolume += 1;
+                totalQuantity += qty;
+
+                // Par vendeur
                 if (!sellerRevenue[v.vendeurId]) sellerRevenue[v.vendeurId] = 0;
                 sellerRevenue[v.vendeurId] += revenue;
+
+                // Par item
                 if (!itemSales[v.item]) itemSales[v.item] = 0;
                 itemSales[v.item] += qty;
             });
 
+            // --- MISE À JOUR UI ---
+            // Si y'a pas de vente, afficher N/A ou 0.00€
             const money = totalRevenue > 0 ? totalRevenue.toFixed(2) + " €" : "0.00 €";
             document.getElementById('acc-revenue').textContent = money;
+            
             document.getElementById('acc-volume').textContent = totalVolume;
             document.getElementById('acc-qty').textContent = totalQuantity;
 
+            // Top Vendeur
             let topSellerName = totalVolume > 0 ? "-" : "N/A";
             let topSellerRev = "0.00 €";
             const sortedSellers = Object.entries(sellerRevenue).sort((a, b) => b[1] - a[1]);
@@ -1262,17 +1054,25 @@
             document.getElementById('acc-top-seller').textContent = topSellerName;
             document.getElementById('acc-top-seller-val').textContent = topSellerRev;
 
+            // --- CHARTS (Chart.js) ---
             renderCharts(filteredVouches, sellerRevenue, itemSales);
         }
+
         function resetAccountingStats() {
             document.getElementById('acc-revenue').textContent = "0.00 €";
             document.getElementById('acc-volume').textContent = "0";
             document.getElementById('acc-qty').textContent = "0";
             document.getElementById('acc-top-seller').textContent = "-";
             document.getElementById('acc-top-seller-val').textContent = "0.00 €";
-            if(charts.revenue) charts.revenue.destroy(); if(charts.sellers) charts.sellers.destroy(); if(charts.items) charts.items.destroy();
+            
+            if(charts.revenue) charts.revenue.destroy();
+            if(charts.sellers) charts.sellers.destroy();
+            if(charts.items) charts.items.destroy();
         }
+
         function renderCharts(vouches, sellers, items) {
+            // 1. Graphique Revenu Mensuel (Ligne)
+            // On groupe par jour pour le graphe
             const dailyRevenue = {};
             vouches.forEach(v => {
                 const day = new Date(v.createdAt).toLocaleDateString('fr-FR');
@@ -1280,32 +1080,76 @@
                 if (!dailyRevenue[day]) dailyRevenue[day] = 0;
                 dailyRevenue[day] += price;
             });
+
             const ctxRev = document.getElementById('chart-revenue').getContext('2d');
             if (charts.revenue) charts.revenue.destroy();
             charts.revenue = new Chart(ctxRev, {
                 type: 'line',
-                data: { labels: Object.keys(dailyRevenue), datasets: [{ label: 'Revenu (€)', data: Object.values(dailyRevenue), borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.2)', tension: 0.4, fill: true }] },
+                data: {
+                    labels: Object.keys(dailyRevenue),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: Object.values(dailyRevenue),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
             });
 
+            // 2. Graphique Top Vendeurs (Barres)
             const ctxSellers = document.getElementById('chart-sellers').getContext('2d');
             if (charts.sellers) charts.sellers.destroy();
-            const sortedSellersData = Object.entries(sellers).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => {
-                const vnd = db.vendeurs.find(v => v.discordId === entry[0]);
-                return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] };
-            });
+            
+            // Preparer data (Nom + Revenu)
+            const sortedSellersData = Object.entries(sellers)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5) // Top 5
+                .map(entry => {
+                    const vnd = db.vendeurs.find(v => v.discordId === entry[0]);
+                    return { name: vnd ? vnd.name : 'ID Inconnu', value: entry[1] };
+                });
+
             charts.sellers = new Chart(ctxSellers, {
                 type: 'bar',
-                data: { labels: sortedSellersData.map(d => d.name), datasets: [{ label: 'Revenu (€)', data: sortedSellersData.map(d => d.value), backgroundColor: ['rgba(99, 102, 241, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(99, 102, 241, 0.8)'] }] },
+                data: {
+                    labels: sortedSellersData.map(d => d.name),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: sortedSellersData.map(d => d.value),
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(99, 102, 241, 0.8)'
+                        ]
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
+            // 3. Graphique Top Items (Barres)
             const ctxItems = document.getElementById('chart-items').getContext('2d');
             if (charts.items) charts.items.destroy();
-            const sortedItemsData = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 5).map(entry => ({ name: entry[0], value: entry[1] }));
+
+            const sortedItemsData = Object.entries(items)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(entry => ({ name: entry[0], value: entry[1] }));
+
             charts.items = new Chart(ctxItems, {
                 type: 'bar',
-                data: { labels: sortedItemsData.map(d => d.name), datasets: [{ label: 'Qté Vendue', data: sortedItemsData.map(d => d.value), backgroundColor: '#10b981' }] },
+                data: {
+                    labels: sortedItemsData.map(d => d.name),
+                    datasets: [{
+                        label: 'Qté Vendue',
+                        data: sortedItemsData.map(d => d.value),
+                        backgroundColor: '#10b981'
+                    }]
+                },
                 options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
             });
         }
@@ -1315,15 +1159,18 @@
             e.preventDefault();
             const data = { discordId: document.getElementById('vnd-id').value, name: document.getElementById('vnd-name').value };
             await fetch(`${API_URL}/vendeurs`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Vendeur', data.name);
+            logAction('CRÉATION', 'Vendeur', data.name); // LOG ICI
             closeModal('modal-vendeur'); loadAllData(); showToast("Vendeur ajouté");
         }
         async function submitEditVendeur(e) {
             e.preventDefault();
             const id = document.getElementById('edit-vnd-id').value;
-            const data = { discordId: document.getElementById('edit-vnd-id-display').value, name: document.getElementById('edit-vnd-name').value };
+            const data = {
+                discordId: document.getElementById('edit-vnd-id-display').value,
+                name: document.getElementById('edit-vnd-name').value
+            };
             await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Vendeur', data.name);
+            logAction('MODIFICATION', 'Vendeur', data.name); // LOG ICI
             closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
         }
         async function deleteVendeur(id) {
@@ -1331,7 +1178,7 @@
             if(confirm(`Supprimer le vendeur ${vnd.name} ?`)) {
                 showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
                     await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Vendeur', vnd.name);
+                    logAction('SUPPRESSION', 'Vendeur', vnd.name); // LOG ICI
                     loadAllData(); showToast("Vendeur supprimé");
                 });
             }
@@ -1341,7 +1188,7 @@
             e.preventDefault();
             const data = { name: document.getElementById('itm-name').value };
             await fetch(`${API_URL}/items`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Item', data.name);
+            logAction('CRÉATION', 'Item', data.name); // LOG ICI
             closeModal('modal-item'); loadAllData(); showToast("Item ajouté");
         }
         async function submitEditItem(e) {
@@ -1349,7 +1196,7 @@
             const id = document.getElementById('edit-itm-id').value;
             const data = { name: document.getElementById('edit-itm-name').value };
             await fetch(`${API_URL}/items/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Item', data.name);
+            logAction('MODIFICATION', 'Item', data.name); // LOG ICI
             closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
         }
         async function deleteItem(id) {
@@ -1357,7 +1204,7 @@
             if(confirm(`Supprimer l'item ${itm.name} ?`)) {
                 showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
                     await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Item', itm.name);
+                    logAction('SUPPRESSION', 'Item', itm.name); // LOG ICI
                     loadAllData(); showToast("Item supprimé");
                 });
             }
@@ -1367,7 +1214,7 @@
             e.preventDefault();
             const data = { name: document.getElementById('pay-name').value };
             await fetch(`${API_URL}/paiements`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('CRÉATION', 'Paiement', data.name);
+            logAction('CRÉATION', 'Paiement', data.name); // LOG ICI
             closeModal('modal-paiement'); loadAllData(); showToast("Paiement ajouté");
         }
         async function submitEditPaiement(e) {
@@ -1375,7 +1222,7 @@
             const id = document.getElementById('edit-pay-id').value;
             const data = { name: document.getElementById('edit-pay-name').value };
             await fetch(`${API_URL}/paiements/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            logAction('MODIFICATION', 'Paiement', data.name);
+            logAction('MODIFICATION', 'Paiement', data.name); // LOG ICI
             closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
         }
         async function deletePaiement(id) {
@@ -1383,7 +1230,7 @@
             if(confirm(`Supprimer le paiement ${pay.name} ?`)) {
                 showConfirm("Supprimer Paiement", "", async () => {
                     await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
-                    logAction('SUPPRESSION', 'Paiement', pay.name);
+                    logAction('SUPPRESSION', 'Paiement', pay.name); // LOG ICI
                     loadAllData(); showToast("Paiement supprimé");
                 });
             }
@@ -1393,7 +1240,12 @@
             const color = document.getElementById('config-color-input').value;
             const logId = document.getElementById('config-log-input').value;
             const lbId = document.getElementById('config-leaderboard-input').value ? document.getElementById('config-leaderboard-input').value : "";
-            await fetch(`${API_URL}/config`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) });
+            
+            await fetch(`${API_URL}/config`, { 
+                method: 'PUT', 
+                headers: {'Content-Type':'application/json'}, 
+                body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) 
+            });
             showToast("Configuration sauvegardée");
         }
 
@@ -1423,9 +1275,15 @@
         function router(view, btn) {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-'+view).classList.remove('hidden');
+            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            if (view === 'accounting' && charts.revenue === null) { generateReport('today'); }
+            
+            if (view === 'accounting' && charts.revenue === null) {
+                generateReport('today');
+            }
+
+            // Fermer sidebar sur mobile après click
             if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
         }
 
@@ -1435,11 +1293,13 @@
             document.getElementById('edit-vnd-name').value = name;
             openModal('modal-vendeur-edit');
         }
+
         function openEditItem(id, name) {
             document.getElementById('edit-itm-id').value = id;
             document.getElementById('edit-itm-name').value = name;
             openModal('modal-item-edit');
         }
+
         function openEditPaiement(id, name) {
             document.getElementById('edit-pay-id').value = id;
             document.getElementById('edit-pay-name').value = name;
