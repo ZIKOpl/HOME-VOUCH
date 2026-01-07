@@ -168,36 +168,38 @@ app.put('/api/config', async (req, res) => {
     res.json(config);
 });
 
-// --- ROUTES UPDATE (MODIFICATION) ---
-
-// Modifier un Vendeur
+// ROUTE UPDATE (MODIFICATION)
 app.put('/api/vendeurs/:id', async (req, res) => {
     try {
         const vendeur = await Vendeur.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(vendeur);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Modifier un Item
 app.put('/api/items/:id', async (req, res) => {
     try {
         const item = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(item);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Modifier un Paiement
 app.put('/api/paiements/:id', async (req, res) => {
     try {
         const paiement = await Paiement.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(paiement);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// CONFIG (IMPORTANT: upsert: true permet de créer ou de mettre à jour)
+app.put('/api/config', async (req, res) => {
+    try {
+        const config = await Config.findOneAndUpdate(
+            { guildId: process.env.GUILD_ID }, 
+            req.body, 
+            { new: true, upsert: true } // <--- IMPORTANT
+        );
+        res.json(config);
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.listen(process.env.PORT, () => {

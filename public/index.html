@@ -6,7 +6,7 @@
     <title>Admin Dashboard VouchBot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Librairie pour les Graphiques -->
+    <!-- Librairie Graphiques -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -20,11 +20,9 @@
             --text-muted: #94a3b8;
             --danger: #ef4444;
             --success: #10b981;
+            --warning: #f97316;
             --border: rgba(255, 255, 255, 0.08);
             --glass: blur(12px);
-            --chart-color-1: 'rgba(99, 102, 241, 0.7)';
-            --chart-color-2: 'rgba(139, 92, 246, 0.7)';
-            --chart-color-3: 'rgba(16, 185, 129, 0.7)';
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -48,127 +46,252 @@
 
         /* --- LOGIN PAGE --- */
         #login-page {
-            height:100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; padding:1rem;
+            height:100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding:1rem;
         }
+
         .login-container {
-            background: var(--bg-card); backdrop-filter: var(--glass); padding: 2rem;
-            border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            text-align: center; width: 100%; max-width: 420px; animation: fadeIn 0.5s ease-out;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            animation: fadeIn 0.5s ease-out;
         }
+
         .login-logo { font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
         .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
         .login-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
-        .btn-discord { background: #5865F2; color: white; width: 100%; padding: 1rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3); }
+
+        .btn-discord {
+            background: #5865F2; color: white; width: 100%; padding: 1rem;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+        }
         .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(88, 101, 242, 0.4); }
 
         /* --- DASHBOARD LAYOUT --- */
         #dashboard-app { display: none; height: 100vh; display: flex; position: relative; }
-        
+
+        /* Sidebar */
         .sidebar {
-            width: 260px; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(10px);
-            border-right: 1px solid var(--border); display: flex; flex-direction: column;
-            padding: 1.5rem; transition: transform 0.3s ease; z-index: 1000;
+            width: 260px;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
-        .brand { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; }
+
+        .brand {
+            font-size: 1.5rem; font-weight: 700; color: white;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;
+        }
         .brand i { color: var(--primary); }
-        .nav-btn { background: transparent; border: none; color: var(--text-muted); width: 100%; text-align: left; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease; margin-bottom: 0.5rem; }
+
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            width: 100%; text-align: left; padding: 0.85rem 1rem;
+            border-radius: 12px; cursor: pointer; font-size: 0.95rem;
+            font-weight: 500; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s ease; margin-bottom: 0.5rem;
+        }
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-btn.active { background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent); color: var(--primary); border-left: 3px solid var(--primary); }
-        
-        .user-panel { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; cursor: pointer; position: relative; }
+        .nav-btn.active { 
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.2), transparent);
+            color: var(--primary); border-left: 3px solid var(--primary);
+        }
+
+        .user-panel {
+            margin-top: auto; display: flex; align-items: center; gap: 10px;
+            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;
+            cursor: pointer; position: relative;
+        }
+        .user-info-display { display: flex; align-items: center; gap: 10px; }
         .user-panel img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { font-size: 0.9rem; }
         .user-name { font-weight: 600; color: white; }
         .user-status { font-size: 0.75rem; color: var(--success); }
 
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; }
+        /* USER MENU DROPDOWN (PC) */
+        .user-menu {
+            position: absolute; bottom: 110%; left: 0; width: 100%;
+            background: #1e293b; border: 1px solid var(--border); border-radius: 8px;
+            padding: 5px; display: none; flex-direction: column;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
+        .user-menu.show { display: flex; }
+        .user-menu-item {
+            padding: 10px; color: var(--text-main); text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; border-radius: 4px; transition: 0.2s;
+        }
+        .user-menu-item:hover { background: rgba(255,255,255,0.1); }
+        .user-menu-item.logout { color: var(--danger); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
+        }
         .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* --- CARDS & GRID --- */
+        /* Cards Grid */
         .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.3s; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; position: relative;
+            overflow: hidden; transition: transform 0.3s;
+        }
         .stat-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.3); }
         .stat-icon { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; color: rgba(255,255,255,0.05); }
         .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
         .stat-value { font-size: 2.5rem; font-weight: 700; color: white; }
         .stat-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; }
 
-        /* --- TABLES --- */
-        .table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; width: 100%; }
-        .table-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+        /* Data Tables */
+        .table-container {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .table-header {
+            padding: 1.5rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;
+        }
         .table-title { font-size: 1.1rem; font-weight: 600; }
-        .btn-add { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border: none; padding: 0.6rem 1.2rem;
+            border-radius: 8px; font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap;
+        }
         .btn-add:hover { opacity: 0.9; transform: scale(1.02); }
+
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: rgba(0,0,0,0.2); white-space: nowrap; }
         td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); color: white; font-size: 0.95rem; white-space: nowrap; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
-        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white;
+        }
         .btn-del { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
-        .btn-edit { background: rgba(249, 115, 22, 0.1); color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px; }
-        .btn-edit:hover { background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+        .btn-edit {
+            background: rgba(249, 115, 22, 0.1); /* Orange clair */
+            color: #f97316; backdrop-filter: blur(2px); border: 1px solid rgba(249, 115, 22, 0.2); margin-right: 5px;
+        }
+        .btn-edit:hover {
+            background: #f97316; color: white; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
 
-        /* --- MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s; padding: 1rem;
+        }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal { background: #1e293b; border: 1px solid var(--border); width: 100%; max-width: 450px; border-radius: 16px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s; }
+
+        .modal {
+            background: #1e293b; border: 1px solid var(--border); width: 100%;
+            max-width: 450px; border-radius: 16px; padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: transform 0.3s;
+        }
         .modal-overlay.active .modal { transform: scale(1); }
         .modal h2 { margin-bottom: 1.5rem; color: white; }
         .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
         
         .form-group { margin-bottom: 1.2rem; }
         .form-label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
-        .form-input, .form-select, .form-date { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit; }
-        .form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+        .form-input, .form-select, .form-date {
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            padding: 0.8rem; border-radius: 8px; color: white; font-family: inherit;
+        }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+
         .btn-submit { width: 100%; background: var(--primary); color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-submit:hover { background: var(--primary-hover); }
         .btn-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .btn-cancel:hover { background: rgba(255,255,255,0.05); color: white; }
 
+        /* Utilities */
         .hidden { display: none !important; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
         .badge-star { background: rgba(240, 178, 50, 0.15); color: #fbbf24; }
         
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px); opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center; }
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white;
+            padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(100px);
+            opacity: 0; transition: 0.3s; z-index: 200; left: 30px; right: auto; width: calc(100% - 60px); text-align: center;
+        }
         .toast.show { transform: translateY(0); opacity: 1; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MOBILE HEADER (HAMBURGER) --- */
+        .mobile-header {
+            display: none; height: 60px; background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px); align-items: center; justify-content: space-between;
+            padding: 0 1rem; border-bottom: 1px solid var(--border);
+        }
+        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
+        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
 
         /* --- ACCOUNTING SECTION --- */
         .accounting-header {
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            background: var(--bg-card); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;
         }
-        .date-filters { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .date-filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .date-filter-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
-        .btn-report { background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: auto; }
-        .btn-report:hover { background: #059669; }
+        .date-presets {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+        }
+        .preset-btn {
+            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border);
+            padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        }
+        .preset-btn:hover, .preset-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
 
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
         .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; position: relative; height: 350px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- MOBILE --- */
-        .mobile-header { display: none; height: 60px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); align-items: center; justify-content: space-between; padding: 0 1rem; border-bottom: 1px solid var(--border); }
-        .hamburger { font-size: 1.5rem; color: white; background: none; border: none; cursor: pointer; }
-        .mobile-logo { font-weight: 700; font-size: 1.1rem; color: white; }
-        
-        /* --- RESPONSIVE --- */
+        /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 768px) {
             #dashboard-app { flex-direction: column; }
-            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
+                transform: translateX(-100%); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
             .sidebar.mobile-open { transform: translateX(0); }
             .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; z-index: 900; }
             .main-content { padding: 5rem 1rem 1rem 1rem; }
             .grid-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
             .stat-value { font-size: 1.8rem; }
             .stat-icon { font-size: 1.5rem; }
-            .accounting-header { flex-direction: column; align-items: stretch; }
-            .btn-report { margin-left: 0; }
+            .accounting-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .date-presets { overflow-x: auto; }
             .charts-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; padding: 1.5rem; }
             .toast { left: 20px; right: 20px; width: auto; bottom: 20px; }
+            .login-container { padding: 1.5rem; }
+            .login-logo { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -233,8 +356,8 @@
                     </div>
                 </div>
                 <!-- Menu Déroulant PC -->
-                <div class="user-menu" id="user-menu" style="position:absolute; bottom:110%; left:0; width:100%; background:#1e293b; border:1px solid var(--border); border-radius:8px; padding:5px; display:none; flex-direction:column; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5);">
-                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()" style="color:var(--danger); text-decoration:none; padding:10px; border-radius:4px; transition:0.2s; display:flex; align-items:center; gap:8px;">
+                <div class="user-menu" id="user-menu">
+                    <a href="#" class="user-menu-item logout" onclick="openLogoutModal()">
                         <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
                     </a>
                 </div>
@@ -277,29 +400,25 @@
                 </div>
             </section>
 
-            <!-- ACCOUNTING SECTION -->
+            <!-- COMPTABILITÉ -->
             <section id="view-accounting" class="hidden">
                 <h2 class="header-title">Rapports de Comptabilité</h2>
                 
-                <!-- Filtres -->
+                <!-- PRESETS BUTTONS -->
                 <div class="accounting-header">
-                    <div style="color:var(--text-muted); font-size:0.9rem;">Sélectionnez une période pour générer les graphiques et statistiques.</div>
-                    <div class="date-filters">
-                        <div class="date-filter-group">
-                            <label class="date-filter-label">Du</label>
-                            <input type="date" id="acc-date-start" class="form-input">
-                        </div>
-                        <div class="date-filter-group">
-                            <label class="date-filter-label">Au</label>
-                            <input type="date" id="acc-date-end" class="form-input">
-                        </div>
-                        <button class="btn-report" onclick="generateAccountingReport()">
-                            <i class="fa-solid fa-chart-line"></i> Générer le rapport
-                        </button>
+                    <div style="color:var(--text-muted); font-size:0.9rem;">Période d'analyse :</div>
+                    <div class="date-presets">
+                        <button class="preset-btn active" onclick="generateReport('today')" id="btn-preset-today">Aujourd'hui</button>
+                        <button class="preset-btn" onclick="generateReport('7d')" id="btn-preset-7d">7 Jours</button>
+                        <button class="preset-btn" onclick="generateReport('30d')" id="btn-preset-30d">1 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('90d')" id="btn-preset-90d">3 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('180d')" id="btn-preset-180d">6 Mois</button>
+                        <button class="preset-btn" onclick="generateReport('365d')" id="btn-preset-365d">1 An</button>
+                        <button class="preset-btn" onclick="generateReport('all')" id="btn-preset-all">Tout le temps</button>
                     </div>
                 </div>
 
-                <!-- KPI Cards -->
+                <!-- KPI CARDS -->
                 <div class="grid-stats">
                     <div class="stat-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
                         <i class="fa-solid fa-sack-dollar stat-icon" style="color:var(--success);"></i>
@@ -327,25 +446,21 @@
                     </div>
                 </div>
 
-                <!-- Graphiques -->
+                <!-- CHARTS -->
                 <div class="charts-grid">
-                    <!-- Graphique Revenu -->
                     <div class="chart-container">
                         <h4 style="margin-bottom:1rem; color:var(--text-main);">Évolution du Chiffre d'Affaires</h4>
                         <canvas id="chart-revenue"></canvas>
                     </div>
-                    <!-- Graphique Vendeurs -->
                     <div class="chart-container">
                         <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Vendeurs</h4>
                         <canvas id="chart-sellers"></canvas>
                     </div>
-                    <!-- Graphique Items -->
                     <div class="chart-container">
                         <h4 style="margin-bottom:1rem; color:var(--text-main);">Top Items</h4>
                         <canvas id="chart-items"></canvas>
                     </div>
                 </div>
-
             </section>
 
             <!-- VOUCHES -->
@@ -354,8 +469,7 @@
                 <div class="table-container">
                     <div class="table-header">
                         <input type="text" placeholder="Rechercher..." class="form-input" style="width:100%;" onkeyup="renderVouches()" id="search-input">
-                    <!-- BOUTON AJOUTER SUPPRIMÉ -->
-                    <!-- <button class="btn-add" onclick="openModal('modal-vouch')"><i class="fa-solid fa-plus"></i> Ajouter</button> -->
+                        <!-- BOUTON AJOUTER SUPPRIMÉ -->
                     </div>
                     <div style="overflow-x: auto;">
                         <table>
@@ -429,6 +543,10 @@
                         <label class="form-label">Log Channel ID</label>
                         <input type="text" id="config-log-input" class="form-input" placeholder="123456...">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Leaderboard Channel ID</label>
+                        <input type="text" id="config-leaderboard-input" class="form-input" placeholder="ID du salon du leaderboard">
+                    </div>
                     <button class="btn-submit" onclick="saveConfig()">Sauvegarder la configuration</button>
                 </div>
             </section>
@@ -438,7 +556,7 @@
 
     <!-- --- MODALS --- -->
 
-    <!-- Modal Vendeur -->
+    <!-- Modal Vendeur (CRÉER) -->
     <div id="modal-vendeur" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-vendeur')">&times;</button>
@@ -457,7 +575,7 @@
         </div>
     </div>
 
-    <!-- Modal Vendeur Edit -->
+    <!-- Modal Vendeur (MODIFIER) -->
     <div id="modal-vendeur-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-vendeur-edit')">&times;</button>
@@ -477,7 +595,7 @@
         </div>
     </div>
 
-    <!-- Modal Item -->
+    <!-- Modal Item (CRÉER) -->
     <div id="modal-item" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-item')">&times;</button>
@@ -492,7 +610,7 @@
         </div>
     </div>
 
-    <!-- Modal Item Edit -->
+    <!-- Modal Item (MODIFIER) -->
     <div id="modal-item-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-item-edit')">&times;</button>
@@ -508,7 +626,7 @@
         </div>
     </div>
 
-    <!-- Modal Paiement -->
+    <!-- Modal Paiement (CRÉER) -->
     <div id="modal-paiement" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-paiement')">&times;</button>
@@ -523,7 +641,7 @@
         </div>
     </div>
 
-    <!-- Modal Paiement Edit -->
+    <!-- Modal Paiement (MODIFIER) -->
     <div id="modal-paiement-edit" class="modal-overlay">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('modal-paiement-edit')">&times;</button>
@@ -539,7 +657,7 @@
         </div>
     </div>
 
-    <!-- --- MODAL DE CONFIRMATION --- -->
+    <!-- --- MODAL DE CONFIRMATION CUSTOM --- -->
     <div id="modal-confirm" class="modal-overlay">
         <div class="modal" style="max-width: 350px; text-align: center;">
             <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
@@ -554,7 +672,7 @@
         </div>
     </div>
 
-    <!-- --- MODAL DE LOGOUT --- -->
+    <!-- --- MODAL DE LOGOUT (PC/MOBILE) --- -->
     <div id="modal-logout" class="modal-overlay">
         <div class="modal" style="max-width: 350px; text-align: center;">
             <div style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;">
@@ -578,9 +696,9 @@
         const API_URL = window.location.origin + "/api";
 
         // --- ETAT GLOBAL ---
-        let db = { vouches: [], vendeurs: [], items: [], paiements: [] };
-        let pendingAction = null;
-        let charts = { revenue: null, sellers: null, items: null }; // Stockage des graphiques Chart.js
+        let db = { vouches: [], vendeurs: [], items: [], paiements: [], config: {} };
+        let pendingAction = null; 
+        let charts = { revenue: null, sellers: null, items: null }; // Stockage Chart.js
 
         // --- UI UTILS ---
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-open'); }
@@ -591,7 +709,11 @@
 
         // --- LOGOUT SYSTEM ---
         function openLogoutModal() { document.getElementById('modal-logout').classList.add('active'); }
-        function performLogout() { localStorage.removeItem('discord_token'); window.location.href = window.location.pathname; }
+        function performLogout() { 
+            localStorage.removeItem('discord_token'); 
+            // Rechargement propre de la page
+            window.location.href = window.location.pathname; 
+        }
 
         function discordLogin() {
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.href)}&response_type=token&scope=identify%20guilds`;
@@ -604,12 +726,14 @@
             if (!token) return showLogin();
 
             try {
-                const res = await fetch(`${API_URL}/auth/verify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token }) });
+                const res = await fetch(`${API_URL}/auth/verify`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ token })
+                });
                 const data = await res.json();
 
                 if (data.authorized) {
                     localStorage.setItem('discord_token', token);
-                    // Nettoyer l'URL
+                    // Nettoyer l'URL pour éviter le bug Discord
                     history.pushState("", document.title, window.location.pathname);
                     
                     document.getElementById('user-name').textContent = data.username;
@@ -631,8 +755,27 @@
         // --- DATA FETCHING ---
         async function loadAllData() {
             try {
-                const [vRes, vndRes, iRes, pRes] = await Promise.all([ fetch(`${API_URL}/vouches`), fetch(`${API_URL}/vendeurs`), fetch(`${API_URL}/items`), fetch(`${API_URL}/paiements`) ]);
-                db.vouches = await vRes.json(); db.vendeurs = await vndRes.json(); db.items = await iRes.json(); db.paiements = await pRes.json();
+                const [vRes, vndRes, iRes, pRes, cRes] = await Promise.all([
+                    fetch(`${API_URL}/vouches`),
+                    fetch(`${API_URL}/vendeurs`),
+                    fetch(`${API_URL}/items`),
+                    fetch(`${API_URL}/paiements`),
+                    fetch(`${API_URL}/config`) // Récupérer la config aussi
+                ]);
+
+                db.vouches = await vRes.json();
+                db.vendeurs = await vndRes.json();
+                db.items = await iRes.json();
+                db.paiements = await pRes.json();
+                db.config = await cRes.json();
+
+                // Remplir les inputs de configuration si existe
+                if(db.config) {
+                    if(db.config.embedColor) document.getElementById('config-color-input').value = db.config.embedColor;
+                    if(db.config.logChannelId) document.getElementById('config-log-input').value = db.config.logChannelId;
+                    if(db.config.leaderboardChannelId) document.getElementById('config-leaderboard-input').value = db.config.leaderboardChannelId;
+                }
+
                 renderAll();
             } catch (e) { console.log("Erreur chargement données"); }
         }
@@ -648,7 +791,13 @@
 
             const tbody = document.getElementById('dashboard-table-body');
             tbody.innerHTML = db.vouches.slice(0,5).map(v => `
-                <tr><td>${v.authorTag}</td><td>${v.vendeurName}</td><td><span class="badge badge-star">${v.note}/5</span></td><td style="color:var(--text-muted)">${v.item}</td><td>${v.quantity ? v.quantity : 'N/A'}</td></tr>
+                <tr>
+                    <td>${v.authorTag}</td>
+                    <td>${v.vendeurName}</td>
+                    <td><span class="badge badge-star">${v.note}/5</span></td>
+                    <td style="color:var(--text-muted)">${v.item}</td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
+                </tr>
             `).join('');
         }
 
@@ -656,8 +805,16 @@
             const search = document.getElementById('search-input')?.value.toLowerCase() || "";
             const filtered = db.vouches.filter(v => v.vendeurName.toLowerCase().includes(search) || v.authorTag.toLowerCase().includes(search));
             document.getElementById('vouch-table-body').innerHTML = filtered.map(v => `
-                <tr><td>#${v.vouchId}</td><td>${v.authorTag}</td><td>${v.vendeurName}</td><td><span class="badge badge-star">${v.note}</span></td><td>${v.quantity ? v.quantity : 'N/A'}</td>
-                <td><button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr>
+                    <td>#${v.vouchId}</td>
+                    <td>${v.authorTag}</td>
+                    <td>${v.vendeurName}</td>
+                    <td><span class="badge badge-star">${v.note}</span></td>
+                    <td>${v.quantity ? v.quantity : 'N/A'}</td>
+                    <td>
+                        <button class="btn-icon btn-del" onclick="deleteVouch('${v._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
             `).join('');
         }
 
@@ -676,59 +833,108 @@
 
         function renderItems() {
             document.getElementById('item-table-body').innerHTML = db.items.map(i => `
-                <tr><td>${i.name}</td><td><button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button><button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr>
+                    <td>${i.name}</td>
+                    <td>
+                        <button class="btn-icon btn-edit" onclick="openEditItem('${i._id}', '${i.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deleteItem('${i._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
             `).join('');
         }
 
         function renderPaiements() {
             document.getElementById('paiement-table-body').innerHTML = db.paiements.map(p => `
-                <tr><td>${p.name}</td><td><button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button><button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button></td></tr>
+                <tr>
+                    <td>${p.name}</td>
+                    <td>
+                        <button class="btn-icon btn-edit" onclick="openEditPaiement('${p._id}', '${p.name}')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-icon btn-del" onclick="deletePaiement('${p._id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
             `).join('');
         }
 
-        // --- COMPTABILITÉ (LE VRAI NOUVEAU TRUC) ---
-        
-        // Helper pour extraire le prix du string (ex: "15€" -> 15)
+        // --- COMPTABILITÉ (LE NOUVEAU TRUC) ---
+
+        // Helper: Extraire prix en float
         function parsePrice(priceStr) {
             return parseFloat(priceStr.replace(/[^0-9.-]+/g, "")) || 0;
         }
 
-        async function generateAccountingReport() {
-            const startDateInput = document.getElementById('acc-date-start').value;
-            const endDateInput = document.getElementById('acc-date-end').value;
+        // Logique des présélections de dates
+        function getPresetDates(preset) {
+            const end = new Date();
+            const start = new Date();
+            
+            end.setHours(23, 59, 59, 999);
 
-            if (!startDateInput || !endDateInput) {
-                alert("Veuillez sélectionner une date de début et de fin.");
-                return;
+            switch(preset) {
+                case 'today':
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '7d':
+                    start.setDate(start.getDate() - 7);
+                    break;
+                case '30d':
+                    start.setDate(start.getDate() - 30);
+                    break;
+                case '90d':
+                    start.setDate(start.getDate() - 90);
+                    break;
+                case '180d':
+                    start.setDate(start.getDate() - 180);
+                    break;
+                case '365d':
+                    start.setFullYear(start.getFullYear() - 1);
+                    break;
+                case 'all':
+                    // Premier vouch de la DB
+                    if(db.vouches.length > 0) {
+                        start.setTime(new Date(db.vouches[db.vouches.length-1].createdAt));
+                    } else {
+                        start.setTime(new Date()); // Si vide, auj
+                    }
+                    break;
+                default:
+                    return null;
             }
+            return { start, end };
+        }
 
-            const startDate = new Date(startDateInput);
-            const endDate = new Date(endDateInput);
-            // Inclure toute la journée de fin
-            endDate.setHours(23, 59, 59, 999);
+        // Fonction principale de génération
+        async function generateReport(preset) {
+            // Bouton visuel
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById(`btn-preset-${preset}`);
+            if(btn) btn.classList.add('active');
+
+            const dates = getPresetDates(preset);
+            if (!dates) return;
+
+            const { start, end } = dates;
 
             // Filtrer les vouches
             const filteredVouches = db.vouches.filter(v => {
                 const vDate = new Date(v.createdAt);
-                return vDate >= startDate && vDate <= endDate;
+                return vDate >= start && vDate <= end;
             });
 
             if (filteredVouches.length === 0) {
-                alert("Aucun vouch trouvé dans cette période.");
-                resetAccountingStats();
-                return;
+                resetAccountingStats(); // Affiche 0 ou N/A si rien
+                return; 
             }
 
             // --- CALCULS ---
             let totalRevenue = 0;
-            let totalVolume = 0; // Nombre de ventes
+            let totalVolume = 0;
             let totalQuantity = 0;
-            const sellerRevenue = {}; // { "DiscordID": 123.50 }
-            const itemSales = {}; // { "NomItem": 20 }
+            const sellerRevenue = {};
+            const itemSales = {};
 
             filteredVouches.forEach(v => {
                 const price = parsePrice(v.prix);
-                const qty = v.quantity || 1;
+                const qty = v.quantity || 1; // Si pas de quantité, on considère 1 (vente d'un service)
                 const revenue = price * qty;
 
                 totalRevenue += revenue;
@@ -745,32 +951,36 @@
             });
 
             // --- MISE À JOUR UI ---
-            document.getElementById('acc-revenue').textContent = totalRevenue.toFixed(2) + " €";
+            // Si y'a pas de vente, afficher N/A ou 0.00€
+            const money = totalRevenue > 0 ? totalRevenue.toFixed(2) + " €" : "0.00 €";
+            document.getElementById('acc-revenue').textContent = money;
+            
             document.getElementById('acc-volume').textContent = totalVolume;
             document.getElementById('acc-qty').textContent = totalQuantity;
 
             // Top Vendeur
-            let topSellerName = "-";
-            let topSellerRev = 0;
+            let topSellerName = totalVolume > 0 ? "-" : "N/A";
+            let topSellerRev = "0.00 €";
             const sortedSellers = Object.entries(sellerRevenue).sort((a, b) => b[1] - a[1]);
             if (sortedSellers.length > 0) {
                 const topId = sortedSellers[0][0];
-                topSellerRev = sortedSellers[0][1];
+                topSellerRev = sortedSellers[0][1].toFixed(2) + " €";
                 const sellerObj = db.vendeurs.find(v => v.discordId === topId);
-                topSellerName = sellerObj ? sellerObj.name : "Vendeur Inconnu";
+                topSellerName = sellerObj ? sellerObj.name : "ID Inconnu";
             }
             document.getElementById('acc-top-seller').textContent = topSellerName;
-            document.getElementById('acc-top-seller-val').textContent = topSellerRev.toFixed(2) + " €";
+            document.getElementById('acc-top-seller-val').textContent = topSellerRev;
 
             // --- CHARTS (Chart.js) ---
             renderCharts(filteredVouches, sellerRevenue, itemSales);
         }
 
         function resetAccountingStats() {
-            document.getElementById('acc-revenue').textContent = "0 €";
+            document.getElementById('acc-revenue').textContent = "0.00 €";
             document.getElementById('acc-volume').textContent = "0";
             document.getElementById('acc-qty').textContent = "0";
             document.getElementById('acc-top-seller').textContent = "-";
+            document.getElementById('acc-top-seller-val').textContent = "0.00 €";
             
             if(charts.revenue) charts.revenue.destroy();
             if(charts.sellers) charts.sellers.destroy();
@@ -871,12 +1081,18 @@
         async function submitEditVendeur(e) {
             e.preventDefault();
             const id = document.getElementById('edit-vnd-id').value;
-            const data = { discordId: document.getElementById('edit-vnd-id-display').value, name: document.getElementById('edit-vnd-name').value };
+            const data = {
+                discordId: document.getElementById('edit-vnd-id-display').value,
+                name: document.getElementById('edit-vnd-name').value
+            };
             await fetch(`${API_URL}/vendeurs/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
             closeModal('modal-vendeur-edit'); loadAllData(); showToast("Vendeur modifié");
         }
         async function deleteVendeur(id) {
-            if(confirm("Supprimer le vendeur ?")) { await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' }); loadAllData(); }
+            showConfirm("Supprimer Vendeur", "Cela ne supprimera pas les vouches.", async () => {
+                await fetch(`${API_URL}/vendeurs/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Vendeur supprimé");
+            });
         }
 
         async function submitItem(e) {
@@ -893,7 +1109,10 @@
             closeModal('modal-item-edit'); loadAllData(); showToast("Item modifié");
         }
         async function deleteItem(id) {
-            if(confirm("Supprimer l'item ?")) { await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' }); loadAllData(); }
+            showConfirm("Supprimer Item", "Cela ne supprimera pas les vouches existants.", async () => {
+                await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Item supprimé");
+            });
         }
 
         async function submitPaiement(e) {
@@ -910,27 +1129,59 @@
             closeModal('modal-paiement-edit'); loadAllData(); showToast("Paiement modifié");
         }
         async function deletePaiement(id) {
-            if(confirm("Supprimer ce moyen de paiement ?")) { await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' }); loadAllData(); }
+            showConfirm("Supprimer Paiement", "", async () => {
+                await fetch(`${API_URL}/paiements/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Paiement supprimé");
+            });
         }
 
         async function saveConfig() {
             const color = document.getElementById('config-color-input').value;
             const logId = document.getElementById('config-log-input').value;
-            const lbId = document.getElementById('config-leaderboard-input') ? document.getElementById('config-leaderboard-input').value : "";
-            await fetch(`${API_URL}/config`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) });
+            const lbId = document.getElementById('config-leaderboard-input').value;
+            
+            await fetch(`${API_URL}/config`, { 
+                method: 'PUT', 
+                headers: {'Content-Type':'application/json'}, 
+                body: JSON.stringify({ embedColor: color, logChannelId: logId, leaderboardChannelId: lbId }) 
+            });
             showToast("Configuration sauvegardée");
         }
 
-        function deleteVouch(id) {
-            if(confirm("Supprimer ce vouch ?")) { showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => { await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' }); loadAllData(); showToast("Supprimé"); }); }
+        async function deleteVouch(id) {
+            showConfirm("Supprimer Vouch", "Cette action est irréversible.", async () => {
+                await fetch(`${API_URL}/vouches/${id}`, { method: 'DELETE' });
+                loadAllData(); showToast("Supprimé");
+            });
         }
 
-        // --- UI UTILS ---
+        // --- HELPERS MODAL & UI ---
+        function showConfirm(title, msg, actionCallback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-msg').textContent = msg;
+            pendingAction = actionCallback;
+            document.getElementById('modal-confirm').classList.add('active');
+        }
+
+        document.getElementById('confirm-btn-action').onclick = () => {
+            if(pendingAction) pendingAction();
+            closeModal('modal-confirm');
+            pendingAction = null;
+        };
+
         function router(view, btn) {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
             document.getElementById('view-'+view).classList.remove('hidden');
+            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
+            
+            // Si on va sur la page comptabilité, on génère le rapport "Aujourd'hui" automatiquement
+            if (view === 'accounting' && charts.revenue === null) {
+                generateReport('today');
+            }
+
+            // Fermer sidebar sur mobile après click
             if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
         }
 
@@ -952,19 +1203,6 @@
             document.getElementById('edit-pay-name').value = name;
             openModal('modal-paiement-edit');
         }
-
-        function showConfirm(title, msg, actionCallback) {
-            document.getElementById('confirm-title').textContent = title;
-            document.getElementById('confirm-msg').textContent = msg;
-            pendingAction = actionCallback;
-            document.getElementById('modal-confirm').classList.add('active');
-        }
-
-        document.getElementById('confirm-btn-action').onclick = () => {
-            if(pendingAction) pendingAction();
-            closeModal('modal-confirm');
-            pendingAction = null;
-        };
 
         // Init
         document.addEventListener('DOMContentLoaded', checkLogin);
